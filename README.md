@@ -66,6 +66,11 @@ Accédez directement à la version web via le lien ci-dessus.
       <img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/c9f64017-867b-44fd-a26f-ed2145bdc5ea" />
       <img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/97ac86fa-5ba5-4879-8423-7d8c1a6dfd3d" />
 - [ ] Fav icon
+- [ ] Protocole multicouleur CHROMA > raccouri touche C
+- [ ] Protocole PROTOCOLE9 > raccourci touche 9
+- [ ] Modale extensions
+- [ ] Filtre TV, floutage
+      
 
 
 
