@@ -50,35 +50,19 @@ Accédez directement à la version web via le lien ci-dessus.
 
 ## 🚧 Roadmap du repo
 
-### v0.2 (Mix Sxn - Roielf) 
-- [ ] Nouveaux thèmes : JUNGLE / GALAXY / SOLARIS
-- [ ] Menu : navigation avec touches directionnelles gauche / droite 
-- [ ] Interface menu mobile / tablette
-- [ ] Raccourcis clavier PC : de 1 à 8  
-- [ ] Version collaborative 
-- [ ] Sliders avancés (taille, vitesse, bulles)
-- [ ] Système de presets collaboratifs
-- [ ] Ajout presets de "Sxn"
-- [ ] Ajout d’un menu déroulant PC (choix du thème protocole )
-- [ ] 🛑Bug: recentrer la lampe
-- [ ] 🛑Bug: hoover menu déroulant bordure doit etre en fond noir sur tous les thèmes
 
-### v0.3 (Roielf) (en conception)
+### v0.3 (Roielf) 
 - [ ] MAJ: Gestion des cookies & sécurité
 - [ ] Infos + CGU clarifiées
 - [ ] Bouton crédits contributeurs
 - [ ] Centrage Flexbox, correctif menu
 - [ ] Sécurité sur demo https://floriouniverse.github.io/lavalamp/(retrait unsafe-eval/innerHTML, isolation scope), (blocage F12/clic droit)
-- [ ] 🛑Bug: Delta time moteur = possible conflit de vitesse selon les appareils.
+- [ ] 🛑Bug: Delta time moteur = possible conflit de vitesse selon les appareils. 
 - [ ] 🛑PBs: Bloquer F12 = pas de de possibilité d'"inspecter",  identifier les failles.
 
 
 ### v0.4
-- [ ] OUTIL MOTOR : Moteur machine : visuel des effets et des bulles (en conception)
-
-<img width="200" height="200" alt="image"  src="https://github.com/user-attachments/assets/4d822ba7-6959-46d5-a554-cbe24b8c50f4" />
-<img width="200" height="200" alt="image"  src="https://github.com/user-attachments/assets/a47d5012-0dbf-4449-b006-f1edf00a123c" />
-
+- [ ] OUTIL MOTOR : Moteur machine : visuel des effets transitions fondues, filtres et effets des bulles (en conception)
 
 ### v0.5
 - [ ] Séparation modulaire (HTML / CSS / JS)
@@ -135,7 +119,19 @@ Vibe Code (Gemini + GPT + prompts + modifications personnelles)
 
 - **V0.0** : version alpha de base
 - **V0.1** : ajout CGU, cookies, structure README, collaboration, mise en page GitHub
-- **V0.2** : Navigation multi-lampes, 7 personnalités uniques,transitions fondues, miniature dans les flèches, maj cgus, licence raccord V 0.3 
+- **V0.2** (Mix Sxn - Roielf) :
+- [ ] Nouveaux thèmes : JUNGLE / GALAXY / SOLARIS
+- [ ] Menu Navigation multi-lampes : navigation avec touches directionnelles gauche / droite 
+- [ ] Interface menu mobile / tablette
+- [ ] Raccourcis clavier PC : de 1 à 8
+- [ ] 8 protocoles de lampe
+- [ ] Version collaborative 
+- [ ] Sliders avancés (taille, vitesse, bulles)
+- [ ] Système de presets collaboratifs
+- [ ] Ajout presets de "Sxn"
+- [ ] Ajout d’un menu déroulant PC (choix du thème protocole )
+- [ ] 🛑Bug: recentrer la lampe
+- [ ] 🛑Bug: hoover menu déroulant bordure doit etre en fond noir sur tous les thèmes
 
 ---
 
