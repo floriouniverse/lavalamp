@@ -1,6 +1,8 @@
 
 # 🌋 LavaLamp - Public Vibe Code & Code
 
+<img width="320" height="240" alt="CHROMAPROTOCOL" src="https://github.com/user-attachments/assets/1b4520d0-0805-4a5f-91e5-d6926154b30a" />
+
 📅 Version : ALPHA 0.3 
 🕒 Dernière modification : 27.04.26  
 
@@ -72,7 +74,7 @@ Accédez directement à la version web via le lien ci-dessus.
 - [ ] Modale extensions
 - [ ] Filtre TV, floutage
 
-<img width="320" height="240" alt="CHROMAPROTOCOL" src="https://github.com/user-attachments/assets/1b4520d0-0805-4a5f-91e5-d6926154b30a" />
+
 
 
 
