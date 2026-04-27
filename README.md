@@ -146,5 +146,5 @@ LavaLamp est un projet expérimental a vue pédagique de “vibe coding” & "co
 
 ---
 
-🔥 Merci pour votre participation !
+🔥 Merci de votre participation !
 
