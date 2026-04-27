@@ -1,0 +1,27 @@
+Creative Commons Attribution-NonCommercial 4.0 International Public License
+Copyright (c) 2026 ALAMBIC X EON GAMES
+
+This work is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License.
+
+To view a copy of this license, visit http://creativecommons.org/licenses/by-nc/4.0/.
+
+===========================================================================
+
+RÉSUMÉ DES CONDITIONS DE LA LICENCE (CC BY-NC 4.0) ===========================================================================
+
+Vous êtes libre de Partager (copier, distribuer) et d'Adapter (remixer, transformer) le matériel tant que vous respectez les termes suivants :
+
+ATTRIBUTION (Crédit) : Vous devez créditer "ALAMBIC X EON GAMES", fournir un lien vers la licence et indiquer si des modifications ont été effectuées.
+
+Chaîne de crédit : En cas d'utilisation d'une version déjà transformée, il est nécessaire de créditer les contributeurs des versions précédentes.
+
+PAS D'UTILISATION COMMERCIALE (NonCommercial) : Vous n'êtes pas autorisé à faire un usage commercial de cette œuvre, tout ou partie du matériel la composant.
+
+PAS DE RESTRICTIONS SUPPLÉMENTAIRES : Vous n'êtes pas autorisé à appliquer des conditions légales ou des mesures techniques qui restreindraient légalement autrui à utiliser l'œuvre dans les conditions décrites par la licence.
+
+
+
+===========================================================================
+
+
+Note informative (Hors obligation de licence) : > Pour assurer le suivi et la synchronisation des mises à jour, voir les nouveautés faites par les collaborateurs, il est conseillé d'inclure un lien vers la version Main du repo en cours du projet.
