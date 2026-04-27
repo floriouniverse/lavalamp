@@ -23,5 +23,3 @@ PAS DE RESTRICTIONS SUPPLÉMENTAIRES : Vous n'êtes pas autorisé à appliquer d
 
 ===========================================================================
 
-
-Note informative (Hors obligation de licence) : > Pour assurer le suivi et la synchronisation des mises à jour, voir les nouveautés faites par les collaborateurs, il est conseillé d'inclure un lien vers la version Main du repo en cours du projet.
