@@ -1,7 +1,7 @@
 # 🌋 LavaLamp - Public Vibe Code & Code
 
-📅 Version : ALPHA 0.2 
-🕒 Dernière modification : 26.04.26  
+📅 Version : ALPHA 0.3 
+🕒 Dernière modification : 27.04.26  
 
 Simulation interactive et collaborative de lampe à lave, entièrement fonctionnelle dans le navigateur (HTML5, CSS3, Vanilla JS).
 
@@ -137,7 +137,7 @@ Vibe Code (Gemini + GPT + prompts + modifications personnelles)
 
 ## 💡 Vision
 
-LavaLamp est un projet expérimental a vue pédagique de “vibe coding” & "coding", j'apprends à l'améliorer :)
+LavaLamp est un projet expérimental a vue pédagique de “vibe coding” & "coding", j'apprends à m'améliorer en l'améliorant :)
 
 ---
 
