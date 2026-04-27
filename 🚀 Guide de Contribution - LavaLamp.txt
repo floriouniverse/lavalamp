@@ -1,0 +1,61 @@
+🚀 Guide de Contribution 0.3 - LavaLamp
+
+Bienvenue. Ce guide explique comment contribuer au nouveau repo (j'ai delete l'ancien, crée celui ci qui passe en privé le temps d'augmenter mes skills, GitHub, bash, repo, sécurité etc :
+
+https://github.com/floriouniverse/lavalamp
+Branche dédiée Collabs : 
+
+---
+
+📝 Identification et historique sur ce repo :
+
+- Indiquer un nom ou pseudo en haut du fichier
+- Préciser la version modifiée
+- Décrire brièvement les changements effectués
+- Commenter le code lorsque nécessaire
+
+---
+
+⚙️ Collaboration Git
+
+J’apprends actuellement à utiliser Git afin d’améliorer la gestion des collaborations et l'utilisation de ce repo.
+
+L’objectif est de rendre les contributions plus fluides, mieux organisées, lisible et compréhensible , et de faciliter les merges entre différentes versions du projet.
+
+---
+
+📈 Apprentissage
+
+J’apprends également à m’améliorer en code et en “vibe code”.
+
+---
+
+⚖️ CGU et Cookies
+
+À partir de la version 0.3 : 
+
+- Les modifs sections CGU et Cookies = nécessité technique / securité
+
+---
+
+🛠️ Processus de contribution
+
+- Les modifications sont intégrées selon disponibilité, ma compréhension et la stabilité du code du projet
+- Le code peut être ajusté pour assurer la cohérence globale avant fusion
+- Les contributeurs doivent respecter la licence choisie, et créditer ALAMBIC X EON GAMES ainsi que les autres contributeurs des versions concernées
+
+---
+
+🛡️ Éthique et sécurité
+
+Le projet doit rester au maximum propre et transparent (Vigilance sur ce repo):
+
+-  ❌ Tracking
+-  ❌ Système de surveillance 
+-  Cookie tiers non nécessaire
+
+Les suggestions d’amélioration sécurité ou code, conseils, critiques utiles, les nouveaux collabs, tous sont les bienvenues.
+
+---
+
+Merci pour votre temps, investissement, vos conseils et votre créativité ! 
