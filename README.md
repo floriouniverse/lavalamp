@@ -56,7 +56,7 @@ Accédez directement à la version web via le lien ci-dessus.
 - [ ] Infos + CGU clarifiées
 - [ ] Bouton crédits contributeurs
 - [ ] Centrage Flexbox, correctif menu
-- [ ] Sécurité sur demo https://floriouniverse.github.io/lavalamp/(retrait unsafe-eval/innerHTML, isolation scope), (blocage F12/clic droit)
+- [ ] Sécurité sur demo https://floriouniverse.github.io/lavalamp/ (retrait unsafe-eval/innerHTML, isolation scope), (blocage F12/clic droit)
 - [ ] 🛑Bug: Delta time moteur = possible conflit de vitesse selon les appareils. 
 - [ ] 🛑PBs: Bloquer F12 = pas de de possibilité d'"inspecter",  identifier les failles.
 
