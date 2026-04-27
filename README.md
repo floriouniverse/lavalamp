@@ -63,6 +63,10 @@ Accédez directement à la version web via le lien ci-dessus.
 
 ### v0.4
 - [ ] OUTIL MOTOR : Moteur machine : visuel des effets transitions fondues, filtres et effets des bulles (en conception)
+      <img width="300" height="300" alt="image" src="https://github.com/user-attachments/assets/c9f64017-867b-44fd-a26f-ed2145bdc5ea" />
+      <img width="300" height="300" alt="image" src="https://github.com/user-attachments/assets/97ac86fa-5ba5-4879-8423-7d8c1a6dfd3d" />
+
+
 
 ### v0.5
 - [ ] Séparation modulaire (HTML / CSS / JS)
@@ -77,6 +81,7 @@ Accédez directement à la version web via le lien ci-dessus.
 Les conseils, aides  & contributions sont les bienvenues 🌱
 
 ### Bonnes pratiques
+- Lire guide de collab
 - Ajouter nom / pseudo + version en haut du code
 - Expliquer clairement les modifications
 - Commenter le code
