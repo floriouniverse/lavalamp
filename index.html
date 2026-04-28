@@ -26,7 +26,7 @@ v0.5 :
 - Extension > Sélecteur de Socles > 3 designs dispo > (SOLIDE, ROCKET, SABLIER) > Barre de choix slide (1.2.3).
 - Optimisation > Pause automatique du moteur physique quand l'onglet est masqué.
 - Optimisation > Réduction automatique des menus sur mobile.
-- Bugfix : Code review, restoration ouverture bouton V0.3
+- Bugfix : Code review
 
 LICENCE : CC BY-NC 4.0 (Attribution - Pas d’Utilisation Commerciale)
 Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
@@ -1492,8 +1492,8 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
 
             Engine.init();
         })();
-     
-     /*     =====================================================================
+
+        /* =====================================================================
                GESTIONNAIRE DES MODALES (RESTORED FROM V0.3)
             ===================================================================== */
             const ModalManager = (() => {
@@ -1543,7 +1543,7 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
                 return { init };
             })();
 
-            // N'oubliez pas d'appeler l'initialisation dans Engine.init()
+     
             ModalManager.init();
     </script>
 </body>
