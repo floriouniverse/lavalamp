@@ -3,8 +3,8 @@
 
 <img width="320" height="240" alt="CHROMAPROTOCOL" src="https://github.com/user-attachments/assets/1b4520d0-0805-4a5f-91e5-d6926154b30a" />
 
-📅 Version : ALPHA 0.3 
-🕒 Dernière modification : 27.04.26  
+📅 Version : ALPHA 0.5 
+🕒 Dernière modification : 28.04.26  
 
 Simulation interactive et collaborative de lampe à lave, entièrement fonctionnelle dans le navigateur (HTML5, CSS3, Vanilla JS).
 
@@ -53,18 +53,7 @@ Accédez directement à la version web via le lien ci-dessus.
 
 ## 🚧 Roadmap du repo
 
-
-### v0.3 (Roielf) 
-- [ ] MAJ: Gestion des cookies & sécurité
-- [ ] Infos + CGU clarifiées
-- [ ] Bouton crédits contributeurs
-- [ ] Centrage Flexbox, correctif menu
-- [ ] Sécurité sur demo https://floriouniverse.github.io/lavalamp/ (retrait unsafe-eval/innerHTML, isolation scope), (blocage F12/clic droit)
-- [ ] 🛑Bug: Delta time moteur = possible conflit de vitesse selon les appareils. 
-- [ ] 🛑PBs: Bloquer F12 = pas de de possibilité d'"inspecter",  identifier les failles.
-
-
-### v0.4 (réalisée)
+### v0.4 
 - [ ] OUTIL ANNEXE MOTOR (HORS LAVA LAMP)> Visuel des effets transitions fondues, répulsion, fusion bulles, séparation bulles, filtres et effets des bulles. (en dev)
       <img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/c9f64017-867b-44fd-a26f-ed2145bdc5ea" />
       <img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/97ac86fa-5ba5-4879-8423-7d8c1a6dfd3d" />
@@ -76,13 +65,12 @@ Accédez directement à la version web via le lien ci-dessus.
 - [ ] Affichage par défaut > Seul le panneau "System Control" est affiché à l'ouverture. 
 - [ ] Affichage par défaut > Nouveau preset de moteur.
 
-### v0.5 (réalisée, en cour de révision)
+### v0.5 
 - [ ] Affichage par défaut > Animation fluide apparition items.
 - [ ] Extension > Palette > Interface supplémentaire, choix par couleur. 
 - [ ] Extension > Sélecteur de Socles > 3 designs dispo > (SOLIDE, ROCKET, SABLIER) > Barre de choix slide (1.2.3).
 - [ ] Optimisation > Pause automatique du moteur physique quand l'onglet est masqué.
 - [ ] Optimisation > Réduction automatique des menus sur mobile.
-- [ ] 🛑PBs : Code review
 
 ### v0.6
 - [ ] Bugfix & équilibrage général
@@ -152,6 +140,16 @@ Vibe Code (Gemini + GPT + prompts + modifications personnelles)
 - [ ] Ajout d’un menu déroulant PC (choix du thème protocole )
 - [ ] 🛑Bug: recentrer la lampe
 - [ ] 🛑Bug: hoover menu déroulant bordure doit etre en fond noir sur tous les thèmes
+- **V0.3** v0.3 
+- [ ] MAJ: Gestion des cookies & sécurité
+- [ ] Infos + CGU clarifiées
+- [ ] Bouton crédits contributeurs
+- [ ] Centrage Flexbox, correctif menu
+- [ ] Sécurité sur demo https://floriouniverse.github.io/lavalamp/ (retrait unsafe-eval/innerHTML, isolation scope), (blocage F12/clic droit)
+- [ ] 🛑Bug: Delta time moteur = possible conflit de vitesse selon les appareils. 
+- [ ] 🛑PBs: Bloquer F12 = pas de de possibilité d'"inspecter",  identifier les failles.
+
+      
 
 ---
 
