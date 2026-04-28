@@ -52,10 +52,11 @@ Accédez directement à la version web via le lien ci-dessus.
 ---
 
 ## 🚧 Roadmap du repo
+  
+   <img width="320" height="240" alt="motorgif" src="https://github.com/user-attachments/assets/76b59eff-c630-4db7-acb3-df2822e06fad" />
 
 ### v0.4 
 - [ ] OUTIL ANNEXE MOTOR (HORS LAVA LAMP)> Visuel des effets transitions fondues, répulsion, fusion bulles, séparation bulles, filtres et effets des bulles. (en dev)
-   <img width="320" height="240" alt="motorgif" src="https://github.com/user-attachments/assets/76b59eff-c630-4db7-acb3-df2822e06fad" />
 - [ ] Fav icon > Rajout du lien favicon pour l'onglet navigateur.
 - [ ] Protocole CHROMA > multicouleur > Cycle de couleurs automatique > raccourci touche C.
 - [ ] Protocole CANDY > raccourci touche 9.
