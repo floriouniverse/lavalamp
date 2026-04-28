@@ -26,7 +26,7 @@ v0.5 :
 - Extension > Sélecteur de Socles > 3 designs dispo > (SOLIDE, ROCKET, SABLIER) > Barre de choix slide (1.2.3).
 - Optimisation > Pause automatique du moteur physique quand l'onglet est masqué.
 - Optimisation > Réduction automatique des menus sur mobile.
-- Bugfix : Code review
+- Bugfix : Code review, restoration ouverture bouton V0.3
 
 LICENCE : CC BY-NC 4.0 (Attribution - Pas d’Utilisation Commerciale)
 Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
@@ -1492,6 +1492,59 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
 
             Engine.init();
         })();
+     
+     /*     =====================================================================
+               GESTIONNAIRE DES MODALES (RESTORED FROM V0.3)
+            ===================================================================== */
+            const ModalManager = (() => {
+                const modals = { 
+                    info: document.getElementById('modal-info'), 
+                    cgu: document.getElementById('modal-cgu'), 
+                    credits: document.getElementById('modal-credits') 
+                };
+
+                const open = (key) => {
+                    if (modals[key]) {
+                        modals[key].classList.add('open');
+                        modals[key].setAttribute('aria-hidden', 'false');
+                    }
+                };
+
+                const closeAll = () => {
+                    Object.values(modals).forEach(m => {
+                        if (m) {
+                            m.classList.remove('open');
+                            m.setAttribute('aria-hidden', 'true');
+                        }
+                    });
+                };
+
+                const init = () => {
+                    // Écouteurs pour l'ouverture
+                    document.getElementById('btn-info').addEventListener('click', () => open('info'));
+                    document.getElementById('btn-cgu').addEventListener('click', () => open('cgu'));
+                    document.getElementById('btn-credits').addEventListener('click', () => open('credits'));
+
+                    // Écouteurs pour la fermeture (clic sur overlay ou bouton [x])
+                    document.querySelectorAll('.modal').forEach(m => {
+                        m.addEventListener('click', (e) => {
+                            if (e.target.hasAttribute('data-close') || e.target.closest('.btn-close-modal')) {
+                                closeAll();
+                            }
+                        });
+                    });
+
+                    // Touche Échap
+                    window.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape') closeAll();
+                    });
+                };
+
+                return { init };
+            })();
+
+            // N'oubliez pas d'appeler l'initialisation dans Engine.init()
+            ModalManager.init();
     </script>
 </body>
 </html>
