@@ -64,25 +64,30 @@ Accédez directement à la version web via le lien ci-dessus.
 - [ ] 🛑PBs: Bloquer F12 = pas de de possibilité d'"inspecter",  identifier les failles.
 
 
-### v0.4
-- [ ] OUTIL MOTOR : Moteur machine : visuel des effets transitions fondues, filtres et effets des bulles (en conception)
+### v0.4 (réalisée)
+- [ ] OUTIL ANNEXE MOTOR (HORS LAVA LAMP)> Visuel des effets transitions fondues, répulsion, fusion bulles, séparation bulles, filtres et effets des bulles. (en dev)
       <img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/c9f64017-867b-44fd-a26f-ed2145bdc5ea" />
       <img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/97ac86fa-5ba5-4879-8423-7d8c1a6dfd3d" />
-- [ ] Fav icon
-- [ ] Protocole multicouleur CHROMA > raccouri touche C
-- [ ] Protocole PROTOCOLE9 > raccourci touche 9
-- [ ] Modale extensions
-- [ ] Filtre TV, floutage
+- [ ] Fav icon > Rajout du lien favicon pour l'onglet navigateur.
+- [ ] Protocole CHROMA > multicouleur > Cycle de couleurs automatique > raccourci touche C.
+- [ ] Protocole CANDY > raccourci touche 9.
+- [ ] Extension : Filtre TV > Effet visuel rétro (scanlines).
+- [ ] UI > Boutons [×] pour fermer totalement les extensions> syncro avec les cases du system control.
+- [ ] Affichage par défaut > Seul le panneau "System Control" est affiché à l'ouverture. 
+- [ ] Affichage par défaut > Nouveau preset de moteur.
 
-
-
-
-
-### v0.5
-- [ ] Séparation modulaire (HTML / CSS / JS)
+### v0.5 (réalisée, en cour de révision)
+- [ ] Affichage par défaut > Animation fluide apparition items.
+- [ ] Extension > Palette > Interface supplémentaire, choix par couleur. 
+- [ ] Extension > Sélecteur de Socles > 3 designs dispo > (SOLIDE, ROCKET, SABLIER) > Barre de choix slide (1.2.3).
+- [ ] Optimisation > Pause automatique du moteur physique quand l'onglet est masqué.
+- [ ] Optimisation > Réduction automatique des menus sur mobile.
+- [ ] 🛑PBs : Code review
 
 ### v0.6
 - [ ] Bugfix & équilibrage général
+- [ ] Séparation modulaire (HTML / CSS / JS)
+
 
 ---
 
