@@ -55,25 +55,9 @@ Accédez directement à la version web via le lien ci-dessus.
   
    <img width="320" height="240" alt="motorgif" src="https://github.com/user-attachments/assets/76b59eff-c630-4db7-acb3-df2822e06fad" />
 
-### v0.4 
-- [ ] OUTIL ANNEXE MOTOR (HORS LAVA LAMP)> Visuel des effets transitions fondues, répulsion, fusion bulles, séparation bulles, filtres et effets des bulles. (en dev)
-- [ ] Fav icon > Rajout du lien favicon pour l'onglet navigateur.
-- [ ] Protocole CHROMA > multicouleur > Cycle de couleurs automatique > raccourci touche C.
-- [ ] Protocole CANDY > raccourci touche 9.
-- [ ] Extension : Filtre TV > Effet visuel rétro (scanlines).
-- [ ] UI > Boutons [×] pour fermer totalement les extensions> syncro avec les cases du system control.
-- [ ] Affichage par défaut > Seul le panneau "System Control" est affiché à l'ouverture. 
-- [ ] Affichage par défaut > Nouveau preset de moteur.
-
-### v0.5 
-- [ ] Affichage par défaut > Animation fluide apparition items.
-- [ ] Extension > Palette > Interface supplémentaire, choix par couleur. 
-- [ ] Extension > Sélecteur de Socles > 3 designs dispo > (SOLIDE, ROCKET, SABLIER) > Barre de choix slide (1.2.3).
-- [ ] Optimisation > Pause automatique du moteur physique quand l'onglet est masqué.
-- [ ] Optimisation > Réduction automatique des menus sur mobile.
-
 ### v0.6
 - [ ] Bugfix & équilibrage général
+- [ ] Design & accord couleur bouton "x"
 - [ ] Séparation modulaire (HTML / CSS / JS)
 
 
@@ -140,14 +124,29 @@ Vibe Code (Gemini + GPT + prompts + modifications personnelles)
 - [ ] Ajout d’un menu déroulant PC (choix du thème protocole )
 - [ ] 🛑Bug: recentrer la lampe
 - [ ] 🛑Bug: hoover menu déroulant bordure doit etre en fond noir sur tous les thèmes
-- **V0.3** v0.3 
+- **V0.3** 
 - [ ] MAJ: Gestion des cookies & sécurité
 - [ ] Infos + CGU clarifiées
 - [ ] Bouton crédits contributeurs
 - [ ] Centrage Flexbox, correctif menu
 - [ ] Sécurité sur demo https://floriouniverse.github.io/lavalamp/ (retrait unsafe-eval/innerHTML, isolation scope), (blocage F12/clic droit)
 - [ ] 🛑Bug: Delta time moteur = possible conflit de vitesse selon les appareils. 
-- [ ] 🛑PBs: Bloquer F12 = pas de de possibilité d'"inspecter",  identifier les failles.
+- [ ] 🛑PBs: Bloquer###
+- **V0.4** 
+- [ ] OUTIL ANNEXE MOTOR (HORS LAVA LAMP)> Visuel des effets transitions fondues, répulsion, fusion bulles, séparation bulles, filtres et effets des bulles. (en dev)
+- [ ] Fav icon > Rajout du lien favicon pour l'onglet navigateur.
+- [ ] Protocole CHROMA > multicouleur > Cycle de couleurs automatique > raccourci touche C.
+- [ ] Protocole CANDY > raccourci touche 9.
+- [ ] Extension : Filtre TV > Effet visuel rétro (scanlines).
+- [ ] UI > Boutons [×] pour fermer totalement les extensions> syncro avec les cases du system control.
+- [ ] Affichage par défaut > Seul le panneau "System Control" est affiché à l'ouverture. 
+- [ ] Affichage par défaut > Nouveau preset de moteur.
+- **V0.5** 
+- [ ] Affichage par défaut > Animation fluide apparition items.
+- [ ] Extension > Palette > Interface supplémentaire, choix par couleur. 
+- [ ] Extension > Sélecteur de Socles > 3 designs dispo > (SOLIDE, ROCKET, SABLIER) > Barre de choix slide (1.2.3).
+- [ ] Optimisation > Pause automatique du moteur physique quand l'onglet est masqué.
+- [ ] Optimisation > Réduction automatique des menus sur mobile. F12 = pas de de possibilité d'"inspecter",  identifier les failles.
 
       
 
