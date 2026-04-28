@@ -2,23 +2,31 @@
 ===========================================================================
 ===========================================================================
 
-Projet Vibe Code : LAVA LAMP SIMULATION V0.3
+Projet Vibe Code : LAVA LAMP SIMULATION V0.5(Fermeture des panneaux)
 Description: Simulateur physique de lampe à lave interactive.
-Verison repo en cours : https://floriouniverse.github.io/lavalamp/
+https://floriouniverse.github.io/lavalamp/
 Créé par : ALAMBIC X EON GAMES ALPHA V0.0 
 Contributeurs : 
 V0.2 Sxn, Roielf 
 V0.3 Roielf 
-Version & Description des modifs par le Collabs :  
-
- V0.3 : 
- MAJ: Gestion des cookies & sécurité
- Infos + CGU clarifiées
- Bouton crédits contributeurs
- Centrage Flexbox, correctif menu
- Sécurité sur demo https://floriouniverse.github.io/lavalamp/(retrait unsafe-eval/innerHTML, isolation scope), (blocage F12/clic droit)
- 🛑Bug: Delta time moteur = possible conflit de vitesse selon les appareils. Autres Conflits.
- 🛑PBs: Bloquer F12 = pas de de possibilité d'"inspecter", identifier les failles.
+v0.4 Roielf
+v0.5 Roielf  
+Version & Description des modifs par les Collabs :  
+V0.4:
+ - Fav icon > Rajout du lien favicon pour l'onglet navigateur.
+ - Protocole CHROMA > multicouleur > Cycle de couleurs automatique > raccourci touche C.
+ - Protocole CANDY > raccourci touche 9.
+ - Extension : Filtre TV > Effet visuel rétro (scanlines).
+ - UI > Boutons [×] pour fermer totalement les extensions> syncro avec les cases du system control.
+ - Affichage par défaut > Seul le panneau "System Control" est affiché à l'ouverture.
+ - Affichage par défaut > Nouveau preset de moteur.
+v0.5 :
+- Affichage par défaut > Animation fluide apparition items.
+- Extension > Palette > Interface supplémentaire, choix par couleur.
+- Extension > Sélecteur de Socles > 3 designs dispo > (SOLIDE, ROCKET, SABLIER) > Barre de choix slide (1.2.3).
+- Optimisation > Pause automatique du moteur physique quand l'onglet est masqué.
+- Optimisation > Réduction automatique des menus sur mobile.
+- Bugfix : Code review
 
 LICENCE : CC BY-NC 4.0 (Attribution - Pas d’Utilisation Commerciale)
 Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
@@ -33,10 +41,14 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
     <meta name="referrer" content="no-referrer">
     <meta name="google" content="notranslate">
     <link rel="icon" href="https://floriouniverse.github.io/lavalamp/favicon.png" type="image/png">
-    <title>LAVA LAMP - V0.3</title>
+    <title>LAVA LAMP - V0.5</title>
     <style>
-        /* --- VARIABLES & BASE --- */
-        :root { --hue: 280; }
+        /* =========================================
+           VARIABLES & BASE 
+        ========================================= */
+        :root { 
+            --hue: 0; /* Hue par défaut (Chroma) */
+        } 
 
         body {
             margin: 0;
@@ -47,364 +59,371 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
             justify-content: center;
             align-items: center;
             height: 100vh;
-            /* Empêche la sélection globale pour une sensation d'application native */
-            user-select: none;
             -webkit-user-select: none;
+            user-select: none;
         }
 
         canvas {
-            filter: contrast(1.1) brightness(1.2);
             -webkit-filter: contrast(1.1) brightness(1.2);
+            filter: contrast(1.1) brightness(1.2);
             box-shadow: 0 0 80px rgba(0,0,0,0.7);
             transition: opacity 0.6s ease;
             display: block;
+            animation: fade-in-scale 1.5s cubic-bezier(0.25, 0.8, 0.25, 1) both;
         }
 
-        /* --- TYPOGRAPHIE & TITRE --- */
-        #main-title {
-            position: absolute;
-            top: 30px;
-            left: 40px; 
-            z-index: 5;
-            pointer-events: none;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            color: hsla(var(--hue), 100%, 85%, 1);
-            text-shadow: 0 0 15px hsla(var(--hue), 100%, 50%, 0.6);
-            transition: all 0.5s ease;
-            text-align: left; 
+        /* =========================================
+           ANIMATIONS D'ENTRÉE (CHORÉGRAPHIE UI)
+        ========================================= */
+        @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-40px); } 100% { opacity: 1; transform: none; } }
+        @keyframes fade-in-up { 0% { opacity: 0; transform: translateY(40px); } 100% { opacity: 1; transform: none; } }
+        @keyframes fade-in-left { 0% { opacity: 0; transform: translateX(-50px); } 100% { opacity: 1; transform: none; } }
+        @keyframes fade-in-right { 0% { opacity: 0; transform: translateX(50px); } 100% { opacity: 1; transform: none; } }
+        @keyframes fade-in-scale { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+
+        /* =========================================
+           TYPOGRAPHIE & TITRE 
+        ========================================= */
+        #title-main {
+            position: absolute; top: 30px; left: 40px; z-index: 5; pointer-events: none;
+            text-transform: uppercase; letter-spacing: 4px; color: hsla(var(--hue), 100%, 85%, 1);
+            text-shadow: 0 0 15px hsla(var(--hue), 100%, 50%, 0.6); transition: all 0.5s ease;
+            text-align: left; animation: fade-in-down 1s cubic-bezier(0.25, 0.8, 0.25, 1) 0.1s both;
+        }
+        #title-main h1 { font-size: 1.4em; margin: 0; line-height: 1.2; border-bottom: 2px solid hsla(var(--hue), 100%, 50%, 0.8); padding-bottom: 5px; }
+
+        /* =========================================
+           PANNEAUX UI (DESIGN INDUSTRIEL)
+        ========================================= */
+        .panel {
+            position: absolute; z-index: 10; width: 280px; max-width: calc(100vw - 40px); max-height: calc(100vh - 150px);
+            background: rgba(0, 0, 0, 0.5); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            border: 1px dashed hsla(var(--hue), 100%, 50%, 0.4); color: hsla(var(--hue), 100%, 85%, 1);
+            box-shadow: 0 0 20px hsla(var(--hue), 100%, 50%, 0.1); transition: border-color 0.5s ease, box-shadow 0.5s ease, background 0.5s ease, left 0.4s ease, top 0.4s ease;
+            box-sizing: border-box; overflow: hidden; touch-action: none; 
         }
 
-        #main-title h1 { 
-            font-size: 1.4em;
-            margin: 0;
-            line-height: 1.2;
-            border-bottom: 2px solid hsla(var(--hue), 100%, 50%, 0.8);
-            padding-bottom: 5px;
+        #panel-system { animation: fade-in-left 1s cubic-bezier(0.25, 0.8, 0.25, 1) 0.3s both; }
+
+        .panel::before, .panel::after {
+            content: ''; position: absolute; width: 10px; height: 10px;
+            border: 2px solid hsla(var(--hue), 100%, 70%, 1); transition: border-color 0.5s ease, box-shadow 0.5s ease; pointer-events: none;
+        }
+        .panel::before { top: -1px; left: -1px; border-bottom: none; border-right: none; }
+        .panel::after { bottom: -1px; right: -1px; border-top: none; border-left: none; }
+
+        .panel-header {
+            padding: 16px 18px; border-bottom: 1px dashed hsla(var(--hue), 100%, 50%, 0.3);
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: move; font-size: 0.85em; letter-spacing: 1px; opacity: 0.9;
+            background: rgba(0,0,0,0.3); font-weight: bold;
         }
 
-        /* --- PANNEAUX UI --- */
-        .ui-panel {
-            position: absolute;
-            z-index: 10;
-            width: 250px;
-            max-width: calc(100vw - 80px);
-            max-height: calc(100vh - 180px);
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px dashed hsla(var(--hue), 100%, 50%, 0.4);
-            color: hsla(var(--hue), 100%, 85%, 1);
-            box-shadow: 0 0 20px hsla(var(--hue), 100%, 50%, 0.1);
-            transition: border-color 0.5s ease, box-shadow 0.5s ease;
-            box-sizing: border-box;
-            overflow: hidden;
-            touch-action: none; 
+        /* Contrôles du Header : Réduire et Fermer */
+        .header-controls { display: flex; align-items: center; gap: 12px; }
+
+        .icon-toggle { 
+            cursor: pointer; padding: 4px; font-size: 1.3em; transition: transform 0.3s ease; 
+        }
+        .icon-toggle:hover { transform: scale(1.2); color: #fff; }
+
+        .icon-close {
+            cursor: pointer; font-size: 1.4em; padding: 4px; line-height: 1;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            color: hsla(var(--hue), 100%, 75%, 0.6);
+        }
+        .icon-close:hover {
+            color: #ff4a4a; text-shadow: 0 0 10px rgba(255, 74, 74, 0.8);
+            transform: scale(1.3) rotate(90deg);
         }
 
-        .ui-panel::before, .ui-panel::after {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border: 2px solid hsla(var(--hue), 100%, 70%, 1);
-            transition: border-color 0.5s ease, box-shadow 0.5s ease;
-            pointer-events: none;
+        .panel-content { padding: 18px; transition: opacity 0.3s ease; }
+        .panel.collapsed .panel-content { display: none !important; opacity: 0; }
+        .panel:not(.collapsed) .panel-content { overflow-y: auto; max-height: calc(100vh - 200px); }
+        
+        /* Force initial collapsed state for panel-system */
+        .panel-system-pos.collapsed .panel-content { display: none !important; opacity: 0; visibility: hidden; }
+
+        .label-section {
+            font-size: 0.75em; text-transform: uppercase; margin-top: 22px; margin-bottom: 12px;
+            display: block; opacity: 0.7; font-weight: bold; letter-spacing: 1px;
+        }
+        .panel-content > .label-section:first-child { margin-top: 0; }
+
+        /* =========================================
+           PANNEAU PALETTE (PLAN INDUSTRIEL NEON)
+        ========================================= */
+        #panel-palette {
+            width: 48px; height: auto; background: rgba(0, 0, 0, 0.75);
+            background-image: linear-gradient(hsla(var(--hue), 100%, 50%, 0.1) 1px, transparent 1px), linear-gradient(90deg, hsla(var(--hue), 100%, 50%, 0.1) 1px, transparent 1px);
+            background-size: 8px 8px; border: 1px solid hsla(var(--hue), 100%, 50%, 0.5); border-radius: 0; 
+            padding-bottom: 18px; box-shadow: 0 0 15px hsla(var(--hue), 100%, 50%, 0.15);
+            animation: fade-in-right 1s cubic-bezier(0.25, 0.8, 0.25, 1) 0.5s both;
         }
 
-        .ui-panel::before { top: -1px; left: -1px; border-bottom: none; border-right: none; }
-        .ui-panel::after { bottom: -1px; right: -1px; border-top: none; border-left: none; }
+        #header-palette {
+            padding: 8px 0; justify-content: center; flex-direction: column; gap: 8px;
+            border-bottom: 1px solid hsla(var(--hue), 100%, 50%, 0.3); background: rgba(0,0,0,0.5); cursor: grab; min-height: 14px;
+        }
+        #header-palette:active { cursor: grabbing; }
 
-        .ui-header {
-            padding: 12px 15px;
-            border-bottom: 1px dashed hsla(var(--hue), 100%, 50%, 0.3);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: move; 
-            font-size: 0.8em;
-            letter-spacing: 1px;
-            opacity: 0.9;
-            background: rgba(0,0,0,0.2);
-            font-weight: bold;
+        .grip-drag-handle {
+            width: 20px; height: 10px; margin-bottom: 4px;
+            background: repeating-linear-gradient(to bottom, hsla(var(--hue), 100%, 70%, 0.6), hsla(var(--hue), 100%, 70%, 0.6) 1px, transparent 1px, transparent 4px);
         }
 
-        .toggle-icon { cursor: pointer; padding: 0 5px; }
-
-        .ui-content {
-            padding: 15px;
-            transition: opacity 0.3s ease;
+        #panel-palette .panel-content {
+            display: flex; flex-direction: column; gap: 16px; align-items: center; padding: 18px 0 0 0; overflow: visible; 
         }
 
-        .ui-panel.collapsed .ui-content { display: none; opacity: 0; }
-        .ui-panel:not(.collapsed) .ui-content { overflow-y: auto; max-height: calc(100vh - 180px - 44px); }
-
-        .section-label {
-            font-size: 0.7em;
-            text-transform: uppercase;
-            margin-top: 18px;
-            margin-bottom: 10px;
-            display: block;
-            opacity: 0.7;
-            font-weight: bold;
-            letter-spacing: 1px;
+        /* BOUTON PALETTE : NOEUD BLUEPRINT SCI-FI */
+        .btn-palette {
+            width: 26px; height: 26px; border-radius: 0; border: 1px solid hsla(var(--hue), 100%, 50%, 0.3);
+            background: rgba(0, 0, 0, 0.8); cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; padding: 0; position: relative;
         }
+        .btn-palette::before {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; transform: translate(-50%, -50%);
+            background: var(--btn-bg); box-shadow: 0 0 8px var(--btn-glow); opacity: 0.6; transition: all 0.2s ease;
+        }
+        .btn-palette::after {
+            content: ''; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border: 1px solid transparent; transition: border-color 0.2s ease, transform 0.2s ease; pointer-events: none;
+        }
+        .btn-palette:hover { border-color: var(--btn-glow); background: rgba(255, 255, 255, 0.05); }
+        .btn-palette:hover::before { opacity: 1; width: 14px; height: 14px; }
+        .btn-palette.active { border-color: #fff; box-shadow: 0 0 15px var(--btn-glow), inset 0 0 5px var(--btn-glow); z-index: 2; }
+        .btn-palette.active::before { opacity: 1; background: var(--btn-bg); box-shadow: 0 0 10px #fff, 0 0 20px var(--btn-glow); width: 12px; height: 12px; }
+        .btn-palette.active::after { border-color: var(--btn-glow); transform: scale(1.15); }
 
-        .ui-content > .section-label:first-child { margin-top: 0; }
-
-        /* --- CONTRÔLES FORMULAIRES --- */
-        .theme-dropdown {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            color: hsla(var(--hue), 100%, 90%, 1);
-            border: 1px solid hsla(var(--hue), 100%, 50%, 0.4);
-            padding: 10px 12px;
-            margin-bottom: 15px;
-            font-family: inherit;
-            font-size: 0.85em;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            outline: none;
-            cursor: pointer;
-            box-shadow: inset 0 0 10px hsla(var(--hue), 100%, 50%, 0.1);
-            transition: all 0.3s ease;
-            appearance: none;
-            -webkit-appearance: none;
+        /* =========================================
+           CONTRÔLES FORMULAIRES 
+        ========================================= */
+        .dropdown-theme {
+            width: 100%; background: rgba(0, 0, 0, 0.4); color: hsla(var(--hue), 100%, 90%, 1); border: 1px solid hsla(var(--hue), 100%, 50%, 0.4); 
+            padding: 12px 14px; margin-bottom: 18px; font-family: inherit; font-size: 0.9em; font-weight: bold; letter-spacing: 1px;
+            text-transform: uppercase; outline: none; cursor: pointer; box-shadow: inset 0 0 10px hsla(var(--hue), 100%, 50%, 0.1); transition: all 0.3s ease;
+            -webkit-appearance: none; appearance: none;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.7)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 16px;
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 18px;
         }
+        .dropdown-theme:hover, .dropdown-theme:focus { background: #010103; border-color: hsla(var(--hue), 100%, 50%, 0.8); box-shadow: 0 0 15px hsla(var(--hue), 100%, 50%, 0.3), inset 0 0 10px hsla(var(--hue), 100%, 50%, 0.2); color: #fff; text-shadow: 0 0 8px hsla(var(--hue), 100%, 50%, 0.8); }
+        .dropdown-theme option { background: #010103; color: hsla(var(--hue), 100%, 85%, 1); font-weight: bold; padding: 12px; }
 
-        .theme-dropdown:hover, .theme-dropdown:focus {
-            background: #010103; 
-            border-color: hsla(var(--hue), 100%, 50%, 0.8);
-            box-shadow: 0 0 15px hsla(var(--hue), 100%, 50%, 0.3), inset 0 0 10px hsla(var(--hue), 100%, 50%, 0.2);
-            color: #fff;
-            text-shadow: 0 0 8px hsla(var(--hue), 100%, 50%, 0.8);
-        }
-
-        .theme-dropdown option { background: #010103; color: hsla(var(--hue), 100%, 85%, 1); font-weight: bold; padding: 10px; }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            cursor: pointer;
-            font-size: 0.85em;
-            font-weight: bold;
-            opacity: 0.9;
-        }
-
-        .checkbox-container:hover { opacity: 1; }
+        .container-checkbox { display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; font-size: 0.88em; font-weight: bold; opacity: 0.9; padding: 6px 0; }
+        .container-checkbox:last-child { margin-bottom: 0; }
+        .container-checkbox:hover { opacity: 1; }
 
         input[type=checkbox] {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border: 1px solid hsla(var(--hue), 100%, 50%, 0.7);
-            background: transparent;
-            margin-right: 12px;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 0 5px hsla(var(--hue), 100%, 50%, 0.2);
-            transition: all 0.3s ease;
+            -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border: 1px solid hsla(var(--hue), 100%, 50%, 0.7); background: transparent;
+            margin-right: 14px; cursor: pointer; position: relative; box-shadow: 0 0 5px hsla(var(--hue), 100%, 50%, 0.2); transition: all 0.3s ease;
         }
+        input[type=checkbox]:checked { background: hsla(var(--hue), 100%, 50%, 0.3); box-shadow: 0 0 10px hsla(var(--hue), 100%, 50%, 0.6); border-color: hsla(var(--hue), 100%, 50%, 1); }
+        input[type=checkbox]:checked::after { content: ''; position: absolute; top: 3px; left: 3px; right: 3px; bottom: 3px; background: #fff; box-shadow: 0 0 8px #fff; }
 
-        input[type=checkbox]:checked {
-            background: hsla(var(--hue), 100%, 50%, 0.3);
-            box-shadow: 0 0 10px hsla(var(--hue), 100%, 50%, 0.6);
-            border-color: hsla(var(--hue), 100%, 50%, 1);
+        .container-slider { margin-bottom: 16px; }
+        .container-slider:last-child { margin-bottom: 0; }
+        .info-slider { display: flex; justify-content: space-between; font-size: 0.8em; font-weight: bold; margin-bottom: 8px; letter-spacing: 0.5px; }
+
+        input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; background: transparent; padding: 8px 0; }
+        input[type=range]::-webkit-slider-runnable-track { height: 6px; background: hsla(var(--hue), 100%, 50%, 0.3); border-radius: 3px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; height: 20px; width: 20px; background: #fff; border: none; margin-top: -7px; cursor: grab; border-radius: 50%; transition: transform 0.2s, background 0.2s; box-shadow: 0 0 8px rgba(0,0,0,0.5); }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); background: hsla(var(--hue), 100%, 90%, 1); }
+        input[type=range]::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.1); background: hsla(var(--hue), 100%, 70%, 1); }
+        input[type=range]::-moz-range-track { height: 6px; background: hsla(var(--hue), 100%, 50%, 0.3); border-radius: 3px; }
+        input[type=range]::-moz-range-thumb { height: 20px; width: 20px; background: #fff; border: none; cursor: grab; border-radius: 50%; transition: transform 0.2s, background 0.2s; box-shadow: 0 0 8px rgba(0,0,0,0.5); }
+        input[type=range]::-moz-range-thumb:hover { transform: scale(1.2); background: hsla(var(--hue), 100%, 90%, 1); }
+        input[type=range]::-moz-range-thumb:active { cursor: grabbing; transform: scale(1.1); background: hsla(var(--hue), 100%, 70%, 1); }
+
+        /* =========================================
+           RESIZE HANDLE 
+        ========================================= */
+        .handle-resizer {
+            position: absolute; right: -2px; bottom: -2px; width: 30px; height: 30px; cursor: se-resize; z-index: 20; background: transparent; pointer-events: auto; touch-action: none;
         }
-
-        input[type=checkbox]:checked::after {
-            content: ''; position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px;
-            background: #fff; box-shadow: 0 0 8px #fff;
-        }
-
-        .slider-box { margin-bottom: 12px; }
-        .slider-box:last-child { margin-bottom: 0; }
-        
-        .slider-info { display: flex; justify-content: space-between; font-size: 0.75em; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.5px; }
-
-        input[type=range] { appearance: none; -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-runnable-track { height: 2px; background: hsla(var(--hue), 100%, 50%, 0.4); }
-        input[type=range]::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; height: 12px; width: 12px; background: #fff; border: 1px solid hsla(var(--hue), 100%, 50%, 1); margin-top: -5px; cursor: pointer; box-shadow: 0 0 8px hsla(var(--hue), 100%, 50%, 0.8); border-radius: 0; }
-        input[type=range]::-moz-range-track { height: 2px; background: hsla(var(--hue), 100%, 50%, 0.4); }
-        input[type=range]::-moz-range-thumb { height: 12px; width: 12px; background: #fff; border: 1px solid hsla(var(--hue), 100%, 50%, 1); cursor: pointer; box-shadow: 0 0 8px hsla(var(--hue), 100%, 50%, 0.8); border-radius: 0; }
-
-        /* --- RESIZE HANDLE --- */
-        .ui-resizer-handle {
-            position: absolute; right: -2px; bottom: -2px; width: 26px; height: 26px;
-            cursor: se-resize; z-index: 20; background: transparent;
-            pointer-events: auto; touch-action: none;
-        }
-
-        .ui-resizer-handle::before {
+        .handle-resizer::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, transparent 0 55%, hsla(var(--hue), 100%, 70%, 0.85) 55% 58%, transparent 58% 70%, hsla(var(--hue), 100%, 70%, 0.55) 70% 73%, transparent 73% 82%, hsla(var(--hue), 100%, 70%, 0.35) 82% 85%, transparent 85% 100%);
-            filter: drop-shadow(0 0 6px hsla(var(--hue), 100%, 55%, 0.6));
-            -webkit-filter: drop-shadow(0 0 6px hsla(var(--hue), 100%, 55%, 0.6));
-            opacity: 0.8; pointer-events: none;
+            -webkit-filter: drop-shadow(0 0 6px hsla(var(--hue), 100%, 55%, 0.6)); opacity: 0.8; pointer-events: none;
+            filter: drop-shadow(0 0 6px hsla(var(--hue), 100%, 55%, 0.6)); 
         }
+        .panel.resizing { box-shadow: 0 0 28px hsla(var(--hue), 100%, 50%, 0.22); border-color: hsla(var(--hue), 100%, 65%, 0.65); }
 
-        .ui-panel.resizing { box-shadow: 0 0 28px hsla(var(--hue), 100%, 50%, 0.22); border-color: hsla(var(--hue), 100%, 65%, 0.65); }
-
-        /* --- NAVIGATION TACTILE --- */
-        #lamp-nav {
-            position: absolute; bottom: 55px; left: 50%; transform: translateX(-50%);
-            z-index: 20; display: flex; align-items: center; gap: 18px;
+        /* =========================================
+           NAVIGATION TACTILE 
+        ========================================= */
+        #nav-bottom {
+            position: absolute; bottom: 55px; left: 50%; transform: translateX(-50%); z-index: 20; display: flex; align-items: center; gap: 18px;
             opacity: 0; visibility: hidden; transition: all 0.4s ease; justify-content: center;
         }
-
-        #lamp-nav.show-nav { opacity: 1; visibility: visible; pointer-events: auto; }
+        #nav-bottom.show-nav { opacity: 1; visibility: visible; pointer-events: auto; }
  
-        .nav-arrow {
-            width: 44px; height: 44px; border: 1px solid hsla(var(--hue), 100%, 60%, 0.7);
-            background: rgba(0,0,0,0.55); color: hsla(var(--hue), 100%, 85%, 1); font-size: 1.3em;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            transition: all 0.25s; border-radius: 4px; box-shadow: 0 0 14px hsla(var(--hue), 100%, 50%, 0.15);
-            -webkit-tap-highlight-color: transparent;
+        .arrow-nav {
+            width: 48px; height: 48px; border: 1px solid hsla(var(--hue), 100%, 60%, 0.7); background: rgba(0,0,0,0.55); color: hsla(var(--hue), 100%, 85%, 1); font-size: 1.5em;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            transition: all 0.25s; border-radius: 6px; box-shadow: 0 0 14px hsla(var(--hue), 100%, 50%, 0.15); -webkit-tap-highlight-color: transparent;
         }
+        .arrow-nav:hover { background: rgba(0,0,0,0.8); box-shadow: 0 0 22px hsla(var(--hue), 100%, 50%, 0.35); }
+        .arrow-nav:active { transform: scale(0.93); }
  
-        .nav-arrow:hover { background: rgba(0,0,0,0.8); box-shadow: 0 0 22px hsla(var(--hue), 100%, 50%, 0.35); }
-        .nav-arrow:active { transform: scale(0.93); }
- 
-        #lamp-card { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 160px; }
-        #lamp-mini { width: 60px; height: 80px; border: 1px solid hsla(var(--hue), 100%, 50%, 0.5); border-radius: 5px; background: rgba(0,0,0,0.4); overflow: hidden; box-shadow: 0 0 12px hsla(var(--hue), 100%, 50%, 0.2); transition: border-color 0.5s, box-shadow 0.5s; }
-        #lamp-name {
-            font-size: 0.75em; letter-spacing: 3px; text-transform: uppercase; color: hsla(var(--hue), 100%, 90%, 1);
-            text-shadow: 0 0 8px hsla(var(--hue), 100%, 50%, 0.8); text-align: center;
-            background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            padding: 6px 14px; border-radius: 6px; border: 1px solid hsla(var(--hue), 100%, 50%, 0.25);
+        #card-lamp { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 160px; }
+        #canvas-mini { width: 60px; height: 80px; border: 1px solid hsla(var(--hue), 100%, 50%, 0.5); border-radius: 5px; background: rgba(0,0,0,0.4); overflow: hidden; box-shadow: 0 0 12px hsla(var(--hue), 100%, 50%, 0.2); transition: border-color 0.5s, box-shadow 0.5s; }
+        #label-lamp-name {
+            font-size: 0.75em; letter-spacing: 3px; text-transform: uppercase; color: hsla(var(--hue), 100%, 90%, 1); text-shadow: 0 0 8px hsla(var(--hue), 100%, 50%, 0.8); text-align: center;
+            background: rgba(0, 0, 0, 0.45); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: 6px; border: 1px solid hsla(var(--hue), 100%, 50%, 0.25);
             box-shadow: 0 4px 12px rgba(0,0,0,0.4); transition: color 0.5s, text-shadow 0.5s, border-color 0.5s, box-shadow 0.5s; margin-top: 2px;
         }
  
-        #lamp-dots { display: flex; gap: 6px; margin-top: 2px; }
-        .lamp-dot { width: 6px; height: 6px; border: 1px solid hsla(var(--hue), 100%, 60%, 0.5); border-radius: 50%; transition: all 0.3s; }
-        .lamp-dot.active { background: hsla(var(--hue), 100%, 70%, 0.9); box-shadow: 0 0 6px hsla(var(--hue), 100%, 50%, 0.7); }
+        #container-lamp-dots { display: flex; gap: 6px; margin-top: 2px; flex-wrap: wrap; justify-content: center; max-width: 140px; }
+        .dot-lamp { width: 8px; height: 8px; border: 1px solid hsla(var(--hue), 100%, 60%, 0.5); border-radius: 50%; transition: all 0.3s; margin-bottom: 2px; }
+        .dot-lamp.active { background: hsla(var(--hue), 100%, 70%, 0.9); box-shadow: 0 0 6px hsla(var(--hue), 100%, 50%, 0.7); }
  
-        #fade-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #010103;
-            z-index: 50; pointer-events: none; opacity: 0; transition: opacity 0.4s ease;
+        #overlay-fade { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #010103; z-index: 50; pointer-events: none; opacity: 0; transition: opacity 0.4s ease; }
+        #overlay-fade.fading { opacity: 1; pointer-events: auto; }
+
+        /* =========================================
+           UI HAUT (BOUTONS & MODALES) 
+        ========================================= */
+        #nav-top { position: absolute; top: 26px; right: 26px; z-index: 50; display: flex; gap: 12px; align-items: center; animation: fade-in-down 1s cubic-bezier(0.25, 0.8, 0.25, 1) 0.2s both; }
+        .btn-top {
+            height: 38px; border: 1px solid hsla(var(--hue), 100%, 60%, 0.7); background: rgba(0,0,0,0.55); color: hsla(var(--hue), 100%, 85%, 1); font-family: inherit; font-weight: 700;
+            line-height: 36px; text-align: center; cursor: pointer; box-shadow: 0 0 16px hsla(var(--hue), 100%, 50%, 0.18); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); -webkit-tap-highlight-color: transparent;
+            transition: all 0.3s ease; padding: 0 18px; border-radius: 19px; font-size: 0.85em;
         }
-        #fade-overlay.fading { opacity: 1; pointer-events: auto; }
-
-        /* --- UI HAUT (BOUTONS & MODALES) --- */
-        #top-nav { position: absolute; top: 26px; right: 26px; z-index: 50; display: flex; gap: 12px; align-items: center; }
-
-        .top-btn {
-            height: 34px; border: 1px solid hsla(var(--hue), 100%, 60%, 0.7); background: rgba(0,0,0,0.45);
-            color: hsla(var(--hue), 100%, 85%, 1); font-family: inherit; font-weight: 700;
-            line-height: 32px; text-align: center; cursor: pointer; box-shadow: 0 0 16px hsla(var(--hue), 100%, 50%, 0.18);
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); -webkit-tap-highlight-color: transparent;
-            transition: all 0.3s ease; padding: 0 14px; border-radius: 17px; font-size: 0.8em;
-        }
-
-        #infoBtn { width: 34px; padding: 0; border-radius: 999px; font-size: 1.1em; font-family: serif; font-style: italic; }
-        .top-btn:hover { box-shadow: 0 0 22px hsla(var(--hue), 100%, 50%, 0.28); background: rgba(0,0,0,0.6); }
-        .top-btn:active { transform: translateY(1px); }
+        #btn-info { width: 38px; padding: 0; border-radius: 999px; font-size: 1.2em; font-family: serif; font-style: italic; }
+        .btn-top:hover { box-shadow: 0 0 22px hsla(var(--hue), 100%, 50%, 0.28); background: rgba(0,0,0,0.75); }
+        .btn-top:active { transform: translateY(1px); }
 
         .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 100; display: none; }
         .modal.open { display: block; }
-        .modal-backdrop { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+        .backdrop-modal { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 
-        .modal-card {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: calc(100vw - 36px); max-width: 450px; max-height: 70vh; background: rgba(0, 0, 0, 0.65);
-            border: 1px dashed hsla(var(--hue), 100%, 50%, 0.45); box-shadow: 0 0 28px hsla(var(--hue), 100%, 50%, 0.14);
-            color: hsla(var(--hue), 100%, 90%, 1); overflow: hidden; border-radius: 10px;
+        .card-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: calc(100vw - 40px); max-width: 500px; max-height: 80vh; background: rgba(0, 0, 0, 0.75);
+            border: 1px dashed hsla(var(--hue), 100%, 50%, 0.5); box-shadow: 0 0 35px hsla(var(--hue), 100%, 50%, 0.2); color: hsla(var(--hue), 100%, 90%, 1); overflow: hidden; border-radius: 12px; display: flex; flex-direction: column;
         }
-
-        .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px dashed hsla(var(--hue), 100%, 50%, 0.3); letter-spacing: 1px; font-size: 0.75em; opacity: 0.9; }
-        .modal-title { text-transform: uppercase; font-weight: bold; }
-        .modal-close { width: 30px; height: 30px; border-radius: 8px; border: 1px solid hsla(var(--hue), 100%, 60%, 0.6); background: rgba(0,0,0,0.35); color: #fff; cursor: pointer; font-size: 18px; line-height: 28px; }
+        .header-modal { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px dashed hsla(var(--hue), 100%, 50%, 0.3); letter-spacing: 1.5px; font-size: 0.85em; opacity: 0.9; background: rgba(0,0,0,0.3); }
+        .title-modal { text-transform: uppercase; font-weight: bold; }
         
-        /* CORRECTIF SÉLECTION TEXTE MODALES */
-        .modal-body { 
-            padding: 16px; 
-            font-size: 0.92em; 
-            line-height: 1.5; 
-            overflow: auto; 
-            max-height: calc(70vh - 52px); 
-            user-select: text; 
-            -webkit-user-select: text; 
+        .btn-close-modal { 
+            width: 36px; height: 36px; border-radius: 8px; border: 1px solid hsla(var(--hue), 100%, 60%, 0.6); background: rgba(255, 60, 60, 0.15); color: #fff; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 10px rgba(255, 60, 60, 0.1);
         }
+        .btn-close-modal svg { width: 20px; height: 20px; pointer-events: none; }
+        .btn-close-modal:hover { background: rgba(255, 60, 60, 0.6); transform: scale(1.1) rotate(90deg); border-color: rgba(255, 100, 100, 1); box-shadow: 0 0 15px rgba(255, 60, 60, 0.5); }
+        
+        .body-modal { padding: 20px; font-size: 0.95em; line-height: 1.6; overflow: auto; max-height: calc(80vh - 70px); -webkit-user-select: text; user-select: text; }
+        .body-modal p { margin: 0 0 12px 0; }
+        .body-modal ul { margin: 0 0 18px 0; padding-left: 22px; }
+        .body-modal li { margin-bottom: 8px; }
+        .body-modal strong { color: #fff; text-shadow: 0 0 8px hsla(var(--hue), 100%, 50%, 0.35); }
 
-        .modal-body p { margin: 0 0 10px 0; }
-        .modal-body ul { margin: 0 0 15px 0; padding-left: 20px; }
-        .modal-body li { margin-bottom: 5px; }
-        .modal-body strong { color: #fff; text-shadow: 0 0 8px hsla(var(--hue), 100%, 50%, 0.35); }
-
-        /* --- LÉGAL --- */
-        #cookieBanner {
+        /* =========================================
+           LÉGAL & FOOTER 
+        ========================================= */
+        #banner-cookie {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100vw - 40px); max-width: 500px;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.85); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
             border: 1px solid hsla(var(--hue), 100%, 50%, 0.6); border-radius: 8px; padding: 15px 20px; color: #fff;
             z-index: 1000; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); font-size: 0.85em; text-align: center;
         }
+        #banner-cookie p { margin: 0 0 15px 0; line-height: 1.4; }
+        .actions-cookie { display: flex; justify-content: center; gap: 10px; }
+        .btn-cookie { background: transparent; border: 1px solid hsla(var(--hue), 100%, 50%, 0.5); color: #fff; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: inherit; font-weight: bold; transition: all 0.2s; }
+        .btn-cookie.accept { background: hsla(var(--hue), 100%, 50%, 0.2); border-color: hsla(var(--hue), 100%, 50%, 0.8); }
+        .btn-cookie:hover { background: hsla(var(--hue), 100%, 50%, 0.4); }
 
-        #cookieBanner p { margin: 0 0 15px 0; line-height: 1.4; }
-        .cookie-actions { display: flex; justify-content: center; gap: 10px; }
-        .cookie-btn { background: transparent; border: 1px solid hsla(var(--hue), 100%, 50%, 0.5); color: #fff; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: inherit; font-weight: bold; transition: all 0.2s; }
-        .cookie-btn.accept { background: hsla(var(--hue), 100%, 50%, 0.2); border-color: hsla(var(--hue), 100%, 50%, 0.8); }
-        .cookie-btn:hover { background: hsla(var(--hue), 100%, 50%, 0.4); }
-
-        #footer {
+        #footer-main {
             position: absolute; bottom: 15px; width: 100%; text-align: center; font-size: 0.65em;
             color: hsla(var(--hue), 100%, 75%, 0.5); pointer-events: none; z-index: 5;
             letter-spacing: 2px; text-transform: uppercase; font-family: inherit; text-shadow: 0 0 5px rgba(0,0,0,0.8);
+            animation: fade-in-up 1s cubic-bezier(0.25, 0.8, 0.25, 1) 0.8s both;
         }
 
-        @media (max-width: 600px) {
-            #main-title { top: 18px; left: 18px; }
-            #ui-main { top: 110px; left: 18px; max-width: calc(100vw - 36px); max-height: calc(100vh - 140px); }
-            #ui-collab { top: 110px; right: auto; left: auto; max-width: calc(100vw - 36px); max-height: calc(100vh - 140px); }
-            #top-nav { top: 14px; right: 14px; gap: 8px; }
-            #lamp-nav { bottom: 45px; gap: 10px; }
-            .nav-arrow { width: 38px; height: 38px; font-size: 1.1em; } 
+        /* =========================================
+           INLINE STYLES EXTRACTED TO CSS CLASSES
+        ========================================= */
+        .ul-modal-list { list-style-type: square; line-height: 1.6; }
+        .body-modal-credits { text-align: center; padding: 20px 0; font-size: 1.05em; line-height: 1.6; }
+        .credits-paragraph { margin-bottom: 15px; }
+        .panel-system-pos { left: 40px; top: 140px; }
+        .container-checkbox-extensions { margin-top: 20px; }
+        .panel-extensions-pos { display: none; right: 110px; top: 140px; left: auto; }
+        .panel-socle-pos { display: none; right: 110px; top: 360px; left: auto; }
+        .panel-collab-pos { display: none; right: 110px; top: 490px; left: auto; }
+        .desc-collab { font-size: 0.8em; opacity: 0.7; margin-top: 5px; font-style: italic; text-align: center; }
+        .panel-palette-pos { display: none; right: 40px; top: 140px; left: auto; }
+        .icon-close-palette { font-size: 1.2em; margin-bottom: 5px; }
+        .resizer-palette-hidden { display: none; }
+
+        /* =========================================
+           RESPONSIVE INTELLIGENT (MOBILE / TABLET / CARRÉ)
+        ========================================= */
+        @media (max-width: 850px), (max-height: 750px), (aspect-ratio: 1/1) {
+            #title-main { top: 15px; left: 15px; }
+            #title-main h1 { font-size: 1.1em; }
+
+            #nav-top { top: 15px; right: 15px; gap: 8px; }
+            .btn-top { height: 34px; line-height: 32px; padding: 0 14px; font-size: 0.75em; }
+            #btn-info { width: 34px; }
+
+            .card-modal { width: 94vw; max-height: 88vh; border-radius: 15px; }
+            .body-modal { max-height: calc(88vh - 70px); font-size: 1em; padding: 22px; }
+
+            .panel { width: calc(100vw - 30px) !important; max-width: 380px !important; left: 15px !important; right: auto !important; }
+            .panel-content { max-height: 45vh !important; }
+
+            #panel-system { top: 75px; }
+            #panel-extensions { top: 135px; }
+            #panel-socle { top: 195px; }
+            #panel-collab { top: 255px; }
+
+            #panel-palette { top: auto !important; bottom: 120px !important; left: auto !important; right: 15px !important; width: 48px !important; }
+
+            #nav-bottom { bottom: 25px; gap: 12px; }
+            .arrow-nav { width: 44px; height: 44px; font-size: 1.3em; }
         }
     </style>
 </head>
 <body>
 
-    <div id="fade-overlay"></div>
+    <div id="overlay-fade"></div>
 
-    <div id="cookieBanner" role="dialog" aria-labelledby="cookieTitle">
-        <p id="cookieTitle">
+    <div id="banner-cookie" role="dialog" aria-labelledby="title-cookie">
+        <p id="title-cookie">
             <strong>CONFIDENTIALITÉ & DONNÉES LOCALES</strong><br>
             100% conforme RGPD/CNIL. <strong>Aucun cookie de pistage.</strong> Stockage local uniquement pour vos réglages.
         </p>
-        <div class="cookie-actions">
-            <button class="cookie-btn accept" id="acceptCookies">OK</button>
+        <div class="actions-cookie">
+            <button class="btn-cookie accept" id="btn-accept-cookie">J'AI COMPRIS</button>
         </div>
     </div>
 
-    <div id="footer">
+    <div id="footer-main">
         &copy; 2026 ALAMBIC X EON GAMES | COLLAB : SXN, ROIELF | CC BY-NC 4.0
     </div>
 
-    <div id="top-nav">
-        <button id="creditsBtn" class="top-btn" aria-label="Crédits" title="Crédits">CRÉDITS</button>
-        <button id="cguBtn" class="top-btn" aria-label="Conditions d'utilisation" title="CGU">CGU</button>
-        <button id="infoBtn" class="top-btn" aria-label="Informations" title="Info">i</button>
+    <div id="nav-top">
+        <button id="btn-credits" class="btn-top" aria-label="Crédits" title="Crédits">CRÉDITS</button>
+        <button id="btn-cgu" class="btn-top" aria-label="Conditions d'utilisation" title="CGU">CGU</button>
+        <button id="btn-info" class="btn-top" aria-label="Informations" title="Info">i</button>
     </div>
 
-    <div id="infoModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
-        <div class="modal-backdrop" data-close="info"></div>
-        <div class="modal-card" role="document">
-            <div class="modal-head">
-                <div class="modal-title">INFO / CONTRÔLES</div>
-                <button class="modal-close" data-close="info" aria-label="Fermer">×</button>
+    <!-- Modales Informatives -->
+    <div id="modal-info" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="backdrop-modal" data-close="info"></div>
+        <div class="card-modal" role="document">
+            <div class="header-modal">
+                <div class="title-modal">INFO / CONTRÔLES</div>
+                <button class="btn-close-modal" data-close="info" aria-label="Fermer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
             </div>
-            <div class="modal-body">
-                <ul style="list-style-type: square; line-height: 1.6;">
-                    <li><strong>Clavier :</strong> Touches [1] à [8] ou flèches [←] / [→] pour changer de thème.</li>
+            <div class="body-modal">
+                <ul class="ul-modal-list">
+                    <li><strong>Clavier :</strong> Touches [1] à [9] ou flèches [←] / [→] pour changer de thème.</li>
+                    <li><strong>Touche Secrète :</strong> Appuyez sur [C] pour la Roue Chromatique (Chroma).</li>
                     <li><strong>Tactile :</strong> Option "MENU TACTILE" dans les extensions.</li>
-                    <li><strong>System Control :</strong> Glissez l'en-tête pour déplacer librement le menu, étirez le coin pour le redimensionner.</li>
+                    <li><strong>System Control :</strong> Glissez l'en-tête pour déplacer librement le menu. Pour les petits écrans, les menus fonctionnent en accordéon intelligent.</li>
                     <li><strong>Physique :</strong> Curseurs en temps réel (densité, vitesse, taille, agitation).</li>
                     <li><strong>Presets :</strong> Option "PRESETS COLLAB" pour les moteurs de la communauté.</li>
                 </ul>
@@ -412,53 +431,58 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
         </div>
     </div>
 
-    <div id="cguModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
-        <div class="modal-backdrop" data-close="cgu"></div>
-        <div class="modal-card" role="document">
-            <div class="modal-head">
-                <div class="modal-title">MENTIONS LÉGALES & CGU</div>
-                <button class="modal-close" data-close="cgu" aria-label="Fermer">x</button>
+    <div id="modal-cgu" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="backdrop-modal" data-close="cgu"></div>
+        <div class="card-modal" role="document">
+            <div class="header-modal">
+                <div class="title-modal">MENTIONS LÉGALES & CGU</div>
+                <button class="btn-close-modal" data-close="cgu" aria-label="Fermer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
             </div>
-            <div class="modal-body">
+            <div class="body-modal">
                 <p>Conformément au RGPD et à la LCEN :</p>
                 <ul>
                     <li><strong>Éditeur :</strong> ALAMBIC X EON GAMES— florie.esclarmonde@proton.me</li>
                     <li><strong>Hébergement :</strong> GitHub Pages (GitHub Inc., San Francisco, CA, USA).</li>
                     <li><strong>Objectif :</strong> Projet collaboratif open-source. Application strictement à but non commercial.</li>
-                    <li><strong>Protection des Données :</strong> Aucune donnée personnelle n'est traitée. Utilisation exclusive du localStorage.</li>
-                    <li><strong>Droit d'utilisation :</strong> Simulateur soumis à la licence Creative Commons. Crédit obligatoire en cas de modification.</li>
+                    <li><strong>Protection des Données :</strong> Aucune donnée personnelle n'est traitée.</li>
+                    <li><strong>Licence :</strong> Simulateur soumis à la licence Creative Commons. Crédit obligatoire.</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <div id="creditsModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
-        <div class="modal-backdrop" data-close="credits"></div>
-        <div class="modal-card" role="document">
-            <div class="modal-head">
-                <div class="modal-title">CRÉDITS</div>
-                <button class="modal-close" data-close="credits" aria-label="Fermer">x</button>
+    <div id="modal-credits" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="backdrop-modal" data-close="credits"></div>
+        <div class="card-modal" role="document">
+            <div class="header-modal">
+                <div class="title-modal">CRÉDITS</div>
+                <button class="btn-close-modal" data-close="credits" aria-label="Fermer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
             </div>
-            <div class="modal-body" style="text-align: center; padding: 20px 0; font-size: 1.05em; line-height: 1.6;">
-                <p style="margin-bottom: 15px;"><strong>ALPHA V0.0</strong><br>ALAMBIC X EON GAMES</p>
-                <p style="margin-bottom: 15px;"><strong>V0.0 à V0.3</strong><br>Roielf</p>
+            <div class="body-modal body-modal-credits">
+                <p class="credits-paragraph"><strong>ALPHA V0.0</strong><br>ALAMBIC X EON GAMES</p>
+                <p class="credits-paragraph"><strong>V0.0 à V0.5</strong><br>Roielf</p>
                 <p><strong>V0.2</strong><br>Sxn</p>
             </div>
         </div>
     </div>
 
-    <div id="main-title">
-        <h1>LAVA LAMP<br>REPO V 0.3</h1>
+    <div id="title-main">
+        <h1>LAVA LAMP<br>REPO V0.5</h1>
     </div>
 
-    <div id="ui-main" class="ui-panel" style="left: 40px; top: 140px;">
-        <div class="ui-header" id="uiHeader-main" title="Maintenez pour déplacer">
+    <!-- PANNEAU 1 : SYSTEM CONTROL (Principal, ne peut pas être fermé totalement) -->
+    <div id="panel-system" class="panel panel-system-pos collapsed">
+        <div class="panel-header" id="header-system" title="Maintenez pour déplacer">
             <span>SYSTEM CONTROL</span>
-            <span class="toggle-icon" id="toggle-ui-main" title="Réduire/Agrandir">[-]</span>
+            <span class="icon-toggle" title="Réduire/Agrandir">[+]</span>
         </div>
-        <div class="ui-content">
-            <span class="section-label" id="protocolsLabel">PROTOCOLS</span>
-            <select id="themeSelect" class="theme-dropdown" aria-labelledby="protocolsLabel">
+        <div class="panel-content">
+            <span class="label-section" id="label-protocols">PROTOCOLS</span>
+            <select id="select-theme" class="dropdown-theme" aria-labelledby="label-protocols">
                 <option value="1">1 - CYBER</option>
                 <option value="2">2 - GLACIER</option>
                 <option value="3">3 - MATRICE</option>
@@ -467,104 +491,193 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
                 <option value="6">6 - GALAXY</option>
                 <option value="7">7 - SOLARIS</option>
                 <option value="8">8 - JUNGLE</option>
+                <option value="9">9 - CANDY</option>
+                <option value="10">C - CHROMA</option>
             </select>
 
-            <span class="section-label">MOTEURS PHYSIQUES</span>
-            <div class="slider-box">
-                <div class="slider-info"><span>DENSITÉ</span><span id="blobCountVal">40</span></div>
-                <input type="range" id="blobSlider" min="5" max="100" value="40" aria-label="Densité">
+            <span class="label-section">MOTEURS PHYSIQUES</span>
+            <div class="container-slider">
+                <div class="info-slider"><span>DENSITÉ</span><span id="val-density">80</span></div>
+                <input type="range" id="slider-density" min="5" max="100" value="80" aria-label="Densité">
             </div>
-            <div class="slider-box">
-                <div class="slider-info"><span>VITESSE</span><span id="speedVal">5</span></div>
-                <input type="range" id="speedSlider" min="1" max="15" step="0.5" value="5" aria-label="Vitesse">
+            <div class="container-slider">
+                <div class="info-slider"><span>VITESSE</span><span id="val-speed">36</span></div>
+                <input type="range" id="slider-speed" min="1" max="100" step="1" value="36" aria-label="Vitesse">
             </div>
-            <div class="slider-box">
-                <div class="slider-info"><span>TAILLE</span><span id="sizeVal">45</span></div>
-                <input type="range" id="sizeSlider" min="15" max="90" value="45" aria-label="Taille">
+            <div class="container-slider">
+                <div class="info-slider"><span>TAILLE</span><span id="val-size">36</span></div>
+                <input type="range" id="slider-size" min="15" max="90" value="36" aria-label="Taille">
             </div>
-            <div class="slider-box" style="margin-bottom: 25px;">
-                <div class="slider-info"><span>AGITATION</span><span id="wobbleVal">20</span></div>
-                <input type="range" id="wobbleSlider" min="0" max="60" value="20" aria-label="Agitation">
+            <div class="container-slider">
+                <div class="info-slider"><span>AGITATION</span><span id="val-wobble">19</span></div>
+                <input type="range" id="slider-wobble" min="0" max="60" value="19" aria-label="Agitation">
             </div>
 
-            <span class="section-label">EXTENSIONS</span>
-            <label class="checkbox-container" title="Menu tactile optimisé">
-                <input type="checkbox" id="mobileMenuCheckbox"> MENU TACTILE 
-            </label>
-            <label class="checkbox-container" title="Presets Sxn">
-                <input type="checkbox" id="collabMenuCheckbox"> PRESETS COLLAB
+            <label class="container-checkbox container-checkbox-extensions" title="Gérer les extensions">
+                <input type="checkbox" id="cb-extensions"> EXTENSIONS
             </label>
         </div>
-        <div id="ui-resizer-main" class="ui-resizer-handle" aria-label="Resize panel"></div>
+        <div id="resizer-system" class="handle-resizer" aria-label="Resize panel"></div>
     </div>
 
-    <div id="ui-collab" class="ui-panel" style="display: none; right: 40px; top: 140px; left: auto;">
-        <div class="ui-header" id="uiHeader-collab" title="Maintenez pour déplacer">
-            <span>PRESETS COLLAB</span>
-            <span class="toggle-icon" id="toggle-ui-collab" title="Réduire/Agrandir">[-]</span>
+    <!-- PANNEAU EXTENSIONS (Fermable) -->
+    <div id="panel-extensions" class="panel panel-extensions-pos">
+        <div class="panel-header" id="header-extensions" title="Maintenez pour déplacer">
+            <span>EXTENSIONS</span>
+            <div class="header-controls">
+                <span class="icon-toggle" title="Réduire/Agrandir">[-]</span>
+                <span class="icon-close" data-panel="panel-extensions" data-cb="cb-extensions" title="Fermer totalement">×</span>
+            </div>
         </div>
-        <div class="ui-content">
-            <span class="section-label">MOTEURS DE SXN</span>
-            <select id="collabDropdown" class="theme-dropdown" aria-label="Choix du preset collab">
-                <!-- Dynamique -->
+        <div class="panel-content">
+            <label class="container-checkbox" title="Menu tactile optimisé">
+                <input type="checkbox" id="cb-mobile-nav"> MENU TACTILE 
+            </label>
+            <label class="container-checkbox" title="Presets Sxn">
+                <input type="checkbox" id="cb-collab"> PRESETS MOTEUR
+            </label>
+            <label class="container-checkbox" title="Filtre TV Rétro sur la lampe">
+                <input type="checkbox" id="cb-tv-filter"> FILTRE TV
+            </label>
+            <label class="container-checkbox" title="Palette de couleurs">
+                <input type="checkbox" id="cb-palette"> PALETTE COULEUR
+            </label>
+            <label class="container-checkbox" title="Design du socle">
+                <input type="checkbox" id="cb-socle"> SOCLE LAMPE
+            </label>
+        </div>
+        <div id="resizer-extensions" class="handle-resizer" aria-label="Resize panel"></div>
+    </div>
+
+    <!-- PANNEAU SOCLE (Fermable) -->
+    <div id="panel-socle" class="panel panel-socle-pos">
+        <div class="panel-header" id="header-socle" title="Maintenez pour déplacer">
+            <span>SOCLE LAMPE</span>
+            <div class="header-controls">
+                <span class="icon-toggle" title="Réduire/Agrandir">[-]</span>
+                <span class="icon-close" data-panel="panel-socle" data-cb="cb-socle" title="Fermer totalement">×</span>
+            </div>
+        </div>
+        <div class="panel-content">
+            <div class="container-slider">
+                <div class="info-slider"><span>TYPE (1-3)</span><span id="val-socle">1 - SOLIDE</span></div>
+                <input type="range" id="slider-socle" min="1" max="3" step="1" value="1" aria-label="Type de Socle">
+            </div>
+        </div>
+        <div id="resizer-socle" class="handle-resizer" aria-label="Resize panel"></div>
+    </div>
+
+    <!-- PANNEAU PRESETS COLLAB (Fermable) -->
+    <div id="panel-collab" class="panel panel-collab-pos">
+        <div class="panel-header" id="header-collab" title="Maintenez pour déplacer">
+            <span>PRESETS COLLAB</span>
+            <div class="header-controls">
+                <span class="icon-toggle" title="Réduire/Agrandir">[-]</span>
+                <span class="icon-close" data-panel="panel-collab" data-cb="cb-collab" title="Fermer totalement">×</span>
+            </div>
+        </div>
+        <div class="panel-content">
+            <span class="label-section">MOTEURS DE SXN</span>
+            <select id="select-collab" class="dropdown-theme" aria-label="Choix du preset collab">
+                <!-- Généré dynamiquement -->
             </select>
-            <div id="collabDesc" style="font-size: 0.75em; opacity: 0.7; margin-top: 5px; font-style: italic; text-align: center;">
+            <div id="desc-collab" class="desc-collab">
                 Sélectionnez un preset pour voir les détails.
             </div>
         </div>
-        <div id="ui-resizer-collab" class="ui-resizer-handle" aria-label="Resize panel"></div>
+        <div id="resizer-collab" class="handle-resizer" aria-label="Resize panel"></div>
     </div>
 
-    <div id="lamp-nav">
-        <button class="nav-arrow" id="prevLamp" aria-label="Lampe précédente">&#8592;</button>
-        <div id="lamp-card">
-            <canvas id="lamp-mini" width="60" height="80"></canvas>
-            <div id="lamp-name">CYBER</div>
-            <div id="lamp-dots"></div>
+    <!-- PANNEAU PALETTE (PLAN INDUSTRIEL) (Fermable) -->
+    <div id="panel-palette" class="panel panel-palette-pos">
+        <div class="panel-header" id="header-palette" title="Maintenez pour déplacer">
+            <span class="icon-close icon-close-palette" data-panel="panel-palette" data-cb="cb-palette" title="Fermer">×</span>
+            <div class="grip-drag-handle"></div>
         </div>
-        <button class="nav-arrow" id="nextLamp" aria-label="Lampe suivante">&#8594;</button>
+        <div class="panel-content" id="grid-palette">
+            <!-- Boutons générés par PaletteManager -->
+        </div>
+        <div id="resizer-palette" class="handle-resizer resizer-palette-hidden"></div>
     </div>
 
+    <!-- NAVIGATION TACTILE -->
+    <div id="nav-bottom">
+        <button class="arrow-nav" id="btn-prev-lamp" aria-label="Lampe précédente">&#8592;</button>
+        <div id="card-lamp">
+            <canvas id="canvas-mini" width="60" height="80"></canvas>
+            <div id="label-lamp-name">CYBER</div>
+            <div id="container-lamp-dots"></div>
+        </div>
+        <button class="arrow-nav" id="btn-next-lamp" aria-label="Lampe suivante">&#8594;</button>
+    </div>
+
+    <!-- CANVAS PRINCIPAL -->
     <canvas id="canvas"></canvas>
 
     <script>
         (() => {
             "use strict";
 
-            // --- SÉCURITÉ GLOBALE ---
+            /* =====================================================================
+               SÉCURITÉ GLOBALE
+            ===================================================================== */
             const SecurityManager = (() => {
                 const init = () => {
                     document.addEventListener('contextmenu', (e) => e.preventDefault());
                     document.addEventListener('keydown', (e) => {
-                        if (e.key === 'F12' || e.keyCode === 123) return e.preventDefault(), false;
-                        if (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) return e.preventDefault(), false;
-                        if (e.ctrlKey && ['U', 'u'].includes(e.key)) return e.preventDefault(), false;
+                        if (e.key === 'F12' || e.keyCode === 123) {
+                            return e.preventDefault(), false;
+                        }
+                        if (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) {
+                            return e.preventDefault(), false;
+                        }
+                        if (e.ctrlKey && ['U', 'u'].includes(e.key)) {
+                            return e.preventDefault(), false;
+                        }
                     });
                 };
                 return { init };
             })();
             SecurityManager.init();
 
-            // --- CONFIGURATION ---
+            /* =====================================================================
+               CONFIGURATION & ETAT GLOBAL
+            ===================================================================== */
             const CONFIG = Object.freeze({
-                LOGICAL_WIDTH: 900, LOGICAL_HEIGHT: 1100, BLOCK_COUNT: 8,
-                CANVAS_ID: 'canvas', MINI_CANVAS_ID: 'lamp-mini', BASE_FPS: 60
+                LOGICAL_WIDTH: 900, 
+                LOGICAL_HEIGHT: 1100, 
+                BLOCK_COUNT: 8,
+                CANVAS_ID: 'canvas', 
+                MINI_CANVAS_ID: 'canvas-mini', 
+                BASE_FPS: 60
             });
 
             const STATE = {
-                lastTime: 0, DT: 1.0 / 60, timeScale: 1.0,
-                currentLampIndex: 0, currentHue: 280, targetHue: 280, isTransitioning: false
+                lastTime: 0, 
+                DT: 1.0 / 60, 
+                timeScale: 1.0,
+                currentLampIndex: 9, // Démarre sur le Protocol C (CHROMA)
+                currentHue: 0, 
+                targetHue: 0, 
+                isTransitioning: false,
+                isTvFilterActive: false,
+                baseType: 1 // Socle SOLIDE par défaut
             };
             
+            /* =====================================================================
+               DONNÉES : LAMPES & PRESETS
+            ===================================================================== */
             const LAMPS = Object.freeze([
-                { name: "CYBER",   hue: 280, blobs: [[0, 255, 255], [200, 0, 255]],  physics: { count: 40, speed: 5,   size: 45, wobble: 20 } },
-                { name: "GLACIER", hue: 190, blobs: [[0, 80, 200], [180, 240, 255]], physics: { count: 25, speed: 2.5, size: 60, wobble: 8 } },
-                { name: "MATRICE", hue: 120, blobs: [[30, 180, 30], [120, 255, 120]], physics: { count: 60, speed: 8,   size: 25, wobble: 35 } },
-                { name: "ALCHEMY", hue: 45,  blobs: [[255, 200, 0], [255, 120, 0]],  physics: { count: 35, speed: 4.5, size: 45, wobble: 15 } },
-                { name: "CRIMSON", hue: 355, blobs: [[255, 30, 30], [80, 0, 0]],     physics: { count: 55, speed: 9,   size: 35, wobble: 40 } },
-                { name: "GALAXY",  hue: 160, blobs: [[0, 255, 180], [100, 80, 255]], physics: { count: 30, speed: 3,   size: 55, wobble: 25 } },
-                { name: "SOLARIS", hue: 25,  blobs: [[255, 80, 0], [255, 230, 50]],  physics: { count: 45, speed: 7,   size: 40, wobble: 28 } },
-                { name: "JUNGLE",  hue: 135, blobs: [[15, 90, 40], [255, 180, 0]],   physics: { count: 50, speed: 6,   size: 50, wobble: 30 } }
+                { name: "CYBER",     hue: 280, dynamicHue: false, blobs: [[0, 255, 255], [200, 0, 255]],     physics: { count: 100, speed: 100, size: 36, wobble: 19 } },
+                { name: "GLACIER",   hue: 190, dynamicHue: false, blobs: [[0, 80, 200], [180, 240, 255]],    physics: { count: 100, speed: 100, size: 36, wobble: 19 } },
+                { name: "MATRICE",   hue: 120, dynamicHue: false, blobs: [[30, 180, 30], [120, 255, 120]],   physics: { count: 100, speed: 100, size: 36, wobble: 19 } },
+                { name: "ALCHEMY",   hue: 45,  dynamicHue: false, blobs: [[255, 200, 0], [255, 120, 0]],     physics: { count: 100, speed: 100, size: 36, wobble: 19 } },
+                { name: "CRIMSON",   hue: 355, dynamicHue: false, blobs: [[255, 30, 30], [80, 0, 0]],        physics: { count: 100, speed: 100, size: 36, wobble: 19 } },
+                { name: "GALAXY",    hue: 160, dynamicHue: false, blobs: [[0, 255, 180], [100, 80, 255]],    physics: { count: 100, speed: 100, size: 36, wobble: 19 } },
+                { name: "SOLARIS",   hue: 25,  dynamicHue: false, blobs: [[255, 80, 0], [255, 230, 50]],     physics: { count: 100, speed: 100, size: 36, wobble: 19 } },
+                { name: "JUNGLE",    hue: 135, dynamicHue: false, blobs: [[15, 90, 40], [255, 180, 0]],      physics: { count: 100, speed: 100, size: 36, wobble: 19 } },
+                { name: "CANDY",     hue: 300, dynamicHue: false, blobs: [[255, 0, 255], [255, 0, 128]],     physics: { count: 100, speed: 100, size: 36, wobble: 19 } },
+                { name: "CHROMA",    hue: 0,   dynamicHue: true,  blobs: [[255, 255, 255], [128, 128, 128]], physics: { count: 100, speed: 100, size: 36, wobble: 19 } }
             ]);
 
             const SXN_PRESETS = Object.freeze([
@@ -577,25 +690,57 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
                 { name: "SOLARIS", desc: "Vitesse intense · Bulles solaires", count: 45, speed: 7,   size: 48, wobble: 28 }
             ]);
 
-            let currentLamp = LAMPS[0];
+            let currentLamp = LAMPS[9];
             let currentBlobTheme = currentLamp.blobs;
-            let currentPhysics = { ...currentLamp.physics };
+            let currentPhysics = { count: 80, speed: 36, size: 36, wobble: 19 };
 
+            /* =====================================================================
+               UTILITAIRES MATH & COULEURS
+            ===================================================================== */
             const Utils = {
                 lerp: (start, end, t) => start * (1 - t) + end * t,
-                clamp: (v, a, b) => Math.max(a, Math.min(b, v))
+                clamp: (v, a, b) => Math.max(a, Math.min(b, v)),
+                hslToRgb: (h, s, l) => {
+                    h = ((h % 360) + 360) % 360;
+                    let c = (1 - Math.abs(2 * l - 1)) * s;
+                    let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+                    let m = l - c / 2;
+                    let r = 0, g = 0, b = 0;
+                    
+                    if (h < 60) { r = c; g = x; b = 0; }
+                    else if (h < 120) { r = x; g = c; b = 0; }
+                    else if (h < 180) { r = 0; g = c; b = x; }
+                    else if (h < 240) { r = 0; g = x; b = c; }
+                    else if (h < 300) { r = x; g = 0; b = c; }
+                    else { r = c; g = 0; b = x; }
+                    
+                    return [
+                        Math.round((r + m) * 255), 
+                        Math.round((g + m) * 255), 
+                        Math.round((b + m) * 255)
+                    ];
+                }
             };
 
-            // --- COOKIES ---
+            /* =====================================================================
+               GESTIONNAIRE DE COOKIES
+            ===================================================================== */
             const CookieManager = (() => {
-                const KEY = 'cookieConsentV03';
+                let acknowledged = false;
                 return {
                     init: () => {
-                        const banner = document.getElementById('cookieBanner');
+                        const banner = document.getElementById('banner-cookie');
+                        const btnAccept = document.getElementById('btn-accept-cookie');
                         try {
-                            if (!localStorage.getItem(KEY)) banner.style.display = 'block';
-                            document.getElementById('acceptCookies').addEventListener('click', () => {
-                                localStorage.setItem(KEY, 'acknowledged');
+                            banner.style.display = 'block';
+                            setTimeout(() => { 
+                                if (banner.style.display === 'block') { 
+                                    banner.style.display = 'none'; 
+                                    acknowledged = true; 
+                                } 
+                            }, 60000);
+                            btnAccept.addEventListener('click', () => {
+                                acknowledged = true;
                                 banner.style.display = 'none';
                             });
                         } catch (e) { banner.style.display = 'none'; }
@@ -604,72 +749,127 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
             })();
             CookieManager.init();
 
-            // --- UI DRAG & RESIZE ---
+            /* =====================================================================
+               GESTIONNAIRE UI (DRAG, RESIZE, ACCORDÉON & FERMETURE)
+            ===================================================================== */
             const UIManager = (() => {
                 const getPt = (e) => (e.touches?.[0] || e.changedTouches?.[0] || e);
 
                 const makeDraggable = (panelId, headerId) => {
-                    const panel = document.getElementById(panelId), header = document.getElementById(headerId);
-                    let isDragging = false, wasDragged = false, sX, sY, iL, iT;
+                    const panel = document.getElementById(panelId);
+                    const header = document.getElementById(headerId);
+                    let isDragging = false, wasDragged = false;
+                    let sX, sY, iL, iT;
 
                     const start = (e) => {
-                        if (e.target.classList.contains('toggle-icon')) return;
-                        isDragging = true; wasDragged = false;
-                        const p = getPt(e); sX = p.clientX; sY = p.clientY;
-                        iL = panel.offsetLeft; iT = panel.offsetTop;
+                        if (e.target.classList.contains('icon-toggle') || e.target.classList.contains('icon-close') || e.target.classList.contains('btn-palette')) return;
+                        isDragging = true; 
+                        wasDragged = false;
+                        
+                        const p = getPt(e); 
+                        sX = p.clientX; 
+                        sY = p.clientY;
+                        iL = panel.offsetLeft; 
+                        iT = panel.offsetTop;
+                        
                         panel.style.transition = 'none';
-                        window.addEventListener('mousemove', drag); window.addEventListener('touchmove', drag, {passive: false});
-                        window.addEventListener('mouseup', end); window.addEventListener('touchend', end);
+                        window.addEventListener('mousemove', drag); 
+                        window.addEventListener('touchmove', drag, {passive: false});
+                        window.addEventListener('mouseup', end); 
+                        window.addEventListener('touchend', end);
                     };
 
                     const drag = (e) => {
                         if (!isDragging) return;
-                        e.preventDefault(); const p = getPt(e);
-                        const dx = p.clientX - sX, dy = p.clientY - sY;
+                        e.preventDefault(); 
+                        
+                        const p = getPt(e);
+                        const dx = p.clientX - sX;
+                        const dy = p.clientY - sY;
+                        
                         if (Math.abs(dx) > 3 || Math.abs(dy) > 3) wasDragged = true;
-                        panel.style.left = (iL + dx) + 'px'; panel.style.top = (iT + dy) + 'px';
-                        panel.style.right = 'auto'; panel.style.bottom = 'auto';
+                        
+                        panel.style.left = (iL + dx) + 'px'; 
+                        panel.style.top = (iT + dy) + 'px';
+                        panel.style.right = 'auto'; 
+                        panel.style.bottom = 'auto';
                     };
 
                     const end = () => {
-                        isDragging = false; panel.style.transition = 'border-color 0.5s ease, box-shadow 0.5s ease';
-                        window.removeEventListener('mousemove', drag); window.removeEventListener('touchmove', drag);
-                        window.removeEventListener('mouseup', end); window.removeEventListener('touchend', end);
+                        isDragging = false; 
+                        panel.style.transition = 'border-color 0.5s ease, box-shadow 0.5s ease, background 0.5s ease, left 0.4s ease, top 0.4s ease';
+                        window.removeEventListener('mousemove', drag); 
+                        window.removeEventListener('touchmove', drag);
+                        window.removeEventListener('mouseup', end); 
+                        window.removeEventListener('touchend', end);
                     };
 
-                    header.addEventListener('mousedown', start); header.addEventListener('touchstart', start, {passive: false});
+                    header.addEventListener('mousedown', start); 
+                    header.addEventListener('touchstart', start, {passive: false});
+                    
                     header.addEventListener('click', (e) => {
-                        if (!wasDragged || e.target.classList.contains('toggle-icon')) {
-                            panel.classList.toggle('collapsed');
-                            panel.querySelector('.toggle-icon').textContent = panel.classList.contains('collapsed') ? '[+]' : '[-]';
-                            if (panel.classList.contains('collapsed')) panel.style.height = '';
+                        if (e.target.classList.contains('icon-close')) return;
+
+                        if (!wasDragged || e.target.classList.contains('icon-toggle')) {
+                            if (panel.id !== 'panel-palette') { 
+                                const isCollapsing = !panel.classList.contains('collapsed');
+                                
+                                // LOGIQUE D'ACCORDÉON INTELLIGENT
+                                if (!isCollapsing && (window.innerWidth <= 850 || window.innerHeight <= 750)) {
+                                    ['system', 'collab', 'extensions', 'socle'].forEach(name => {
+                                        const p = document.getElementById('panel-' + name);
+                                        if (p && p.id !== panel.id && p.style.display !== 'none') {
+                                            p.classList.add('collapsed');
+                                            const icon = p.querySelector('.icon-toggle');
+                                            if (icon) icon.textContent = '[+]';
+                                        }
+                                    });
+                                }
+
+                                panel.classList.toggle('collapsed');
+                                const icon = panel.querySelector('.icon-toggle');
+                                if (icon) icon.textContent = panel.classList.contains('collapsed') ? '[+]' : '[-]';
+                                if (panel.classList.contains('collapsed')) panel.style.height = '';
+                            }
                         }
                     });
                 };
 
                 const makeResizable = (panelId, resizerId) => {
-                    const panel = document.getElementById(panelId), resizer = document.getElementById(resizerId);
-                    let dragging = false, sX, sY, sW, sH;
+                    const panel = document.getElementById(panelId);
+                    const resizer = document.getElementById(resizerId);
+                    if (!resizer) return;
+                    let dragging = false;
+                    let sX, sY, sW, sH;
 
                     const start = (e) => {
                         e.preventDefault(); dragging = true;
-                        const p = getPt(e); sX = p.clientX; sY = p.clientY;
+                        const p = getPt(e); 
+                        sX = p.clientX; sY = p.clientY;
                         sW = panel.getBoundingClientRect().width; sH = panel.getBoundingClientRect().height;
+                        
                         panel.classList.add('resizing');
                         if (resizer.setPointerCapture && e.pointerId != null) resizer.setPointerCapture(e.pointerId);
-                        window.addEventListener('mousemove', drag, {passive: false}); window.addEventListener('touchmove', drag, {passive: false});
-                        window.addEventListener('mouseup', end); window.addEventListener('touchend', end);
+                        
+                        window.addEventListener('mousemove', drag, {passive: false}); 
+                        window.addEventListener('touchmove', drag, {passive: false});
+                        window.addEventListener('mouseup', end); 
+                        window.addEventListener('touchend', end);
                     };
 
                     const drag = (e) => {
                         if (!dragging) return;
-                        const p = getPt(e), nextW = Utils.clamp(sW + p.clientX - sX, 200, window.innerWidth - panel.offsetLeft - 20),
-                              nextH = Utils.clamp(sH + p.clientY - sY, 56, window.innerHeight - panel.offsetTop - 20);
+                        const p = getPt(e);
+                        const nextW = Utils.clamp(sW + p.clientX - sX, 200, window.innerWidth - panel.offsetLeft - 20);
+                        const nextH = Utils.clamp(sH + p.clientY - sY, 56, window.innerHeight - panel.offsetTop - 20);
+                        
                         if (nextW <= 210 || nextH <= 80) {
-                            panel.classList.add('collapsed'); panel.querySelector('.toggle-icon').textContent = '[+]';
+                            panel.classList.add('collapsed'); 
+                            if(panel.querySelector('.icon-toggle')) panel.querySelector('.icon-toggle').textContent = '[+]';
                             panel.style.width = nextW + 'px'; panel.style.height = '';
                         } else {
-                            panel.classList.remove('collapsed'); panel.querySelector('.toggle-icon').textContent = '[-]';
+                            panel.classList.remove('collapsed'); 
+                            if(panel.querySelector('.icon-toggle')) panel.querySelector('.icon-toggle').textContent = '[-]';
                             panel.style.width = nextW + 'px'; panel.style.height = nextH + 'px';
                         }
                     };
@@ -679,19 +879,109 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
                         window.removeEventListener('mousemove', drag); window.removeEventListener('touchmove', drag);
                         window.removeEventListener('mouseup', end); window.removeEventListener('touchend', end);
                     };
-                    resizer.addEventListener('mousedown', start, {passive: false}); resizer.addEventListener('touchstart', start, {passive: false});
+                    
+                    resizer.addEventListener('mousedown', start, {passive: false}); 
+                    resizer.addEventListener('touchstart', start, {passive: false});
                 };
 
-                return { init: () => {
-                    ['ui-main', 'ui-collab'].forEach(id => {
-                        makeDraggable(id, id.replace('ui-', 'uiHeader-'));
-                        makeResizable(id, id.replace('ui-', 'ui-resizer-'));
+                const initCloseButtons = () => {
+                    document.querySelectorAll('.icon-close').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation(); // Empêche le panel de basculer en réduit/agrandi
+                            const panelId = btn.getAttribute('data-panel');
+                            const cbId = btn.getAttribute('data-cb');
+                            const panel = document.getElementById(panelId);
+                            
+                            // 1. Ferme complètement le panneau
+                            if (panel) {
+                                panel.style.display = 'none';
+                                // Réinitialise l'état du panneau pour la prochaine ouverture
+                                if(panel.id !== 'panel-palette') {
+                                    panel.classList.add('collapsed');
+                                    const iconToggle = panel.querySelector('.icon-toggle');
+                                    if (iconToggle) iconToggle.textContent = '[+]';
+                                    panel.style.height = '';
+                                }
+                            }
+                            // 2. Décoche la checkbox liée dans le System Control
+                            if (cbId) {
+                                const cb = document.getElementById(cbId);
+                                if (cb) cb.checked = false;
+                            }
+                        });
                     });
-                }};
+                };
+
+                return { 
+                    init: () => {
+                        ['system', 'collab', 'palette', 'extensions', 'socle'].forEach(name => {
+                            makeDraggable('panel-' + name, 'header-' + name);
+                            if (name !== 'palette') makeResizable('panel-' + name, 'resizer-' + name);
+                        });
+                        initCloseButtons();
+                        // Forcer le panneau System Control en mode réduit au démarrage
+                        const panelSystem = document.getElementById('panel-system');
+                        if (panelSystem && !panelSystem.classList.contains('collapsed')) {
+                            panelSystem.classList.add('collapsed');
+                            const icon = panelSystem.querySelector('.icon-toggle');
+                            if (icon) icon.textContent = '[+]';
+                        }
+                    }
+                };
             })();
             UIManager.init();
 
-            // --- PHYSIQUE 3D & CLASSES ---
+            /* =====================================================================
+               GESTIONNAIRE PALETTE DE COULEURS
+            ===================================================================== */
+            const PaletteManager = (() => {
+                const buttons = [];
+
+                const init = () => {
+                    const grid = document.getElementById('grid-palette');
+                    grid.innerHTML = ''; 
+
+                    LAMPS.forEach((lamp, idx) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-palette';
+                        btn.setAttribute('aria-label', `Thème ${lamp.name}`);
+                        btn.title = lamp.name;
+                        
+                        btn.style.setProperty('--btn-glow', `hsl(${lamp.hue}, 100%, 60%)`);
+                        
+                        if (lamp.name === "CHROMA") {
+                            btn.style.setProperty('--btn-bg', 'linear-gradient(135deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)');
+                        } else {
+                            const c1 = lamp.blobs[0].join(',');
+                            const c2 = lamp.blobs[1].join(',');
+                            btn.style.setProperty('--btn-bg', `linear-gradient(135deg, rgb(${c1}) 20%, rgb(${c2}) 80%)`);
+                        }
+                        
+                        btn.addEventListener('click', () => {
+                            LampController.switchLamp(idx);
+                        });
+                        
+                        grid.appendChild(btn);
+                        buttons.push({ element: btn, index: idx });
+                    });
+                };
+
+                const updateActiveState = (activeIndex) => {
+                    buttons.forEach(btnObj => {
+                        if (btnObj.index === activeIndex) {
+                            btnObj.element.classList.add('active');
+                        } else {
+                            btnObj.element.classList.remove('active');
+                        }
+                    });
+                };
+
+                return { init, updateActiveState };
+            })();
+
+            /* =====================================================================
+               CLASSES & MATHS 3D
+            ===================================================================== */
             const Math3D = {
                 project: (x, y, z, cx, cy) => { const scale = 600 / (600 + z); return { x: cx + x * scale, y: cy + y * scale, scale }; },
                 rotateX: (y, z, a) => ({ y: y * Math.cos(a) - z * Math.sin(a), z: y * Math.sin(a) + z * Math.cos(a) }),
@@ -700,26 +990,34 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
 
             class Cube3D {
                 constructor(top, bot) {
-                    this.size = 25 + Math.random() * 20; this.x = (Math.random() - 0.5) * 150;
-                    this.y = top + Math.random() * (bot - top); this.z = (Math.random() - 0.5) * 100;
-                    this.vy = (Math.random() - 0.5) * 0.8; this.ax = Math.random() * 6; this.ay = Math.random() * 6;
+                    this.size = 25 + Math.random() * 20; 
+                    this.x = (Math.random() - 0.5) * 150;
+                    this.y = top + Math.random() * (bot - top); 
+                    this.z = (Math.random() - 0.5) * 100;
+                    this.vy = (Math.random() - 0.5) * 0.8; 
+                    this.ax = Math.random() * 6; this.ay = Math.random() * 6;
                     this.vrx = (Math.random() - 0.5) * 0.03; this.vry = (Math.random() - 0.5) * 0.03;
                 }
                 update(top, bot) {
-                    this.y += this.vy * STATE.timeScale; this.ax += this.vrx * STATE.timeScale; this.ay += this.vry * STATE.timeScale;
+                    this.y += this.vy * STATE.timeScale; 
+                    this.ax += this.vrx * STATE.timeScale; 
+                    this.ay += this.vry * STATE.timeScale;
                     if (this.y < top || this.y > bot) this.vy *= -1;
                 }
                 draw(ctx, cx) {
                     const s = this.size;
-                    const v = [{x:-s,y:-s,z:-s},{x:s,y:-s,z:-s},{x:s,y:s,z:-s},{x:-s,y:s,z:-s},{x:-s,y:-s,z:s},{x:s,y:-s,z:s},{x:s,y:s,z:s},{x:-s,y:s,z:s}];
+                    const v = [ {x:-s,y:-s,z:-s}, {x:s,y:-s,z:-s}, {x:s,y:s,z:-s}, {x:-s,y:s,z:-s}, {x:-s,y:-s,z:s},  {x:s,y:-s,z:s},  {x:s,y:s,z:s},  {x:-s,y:s,z:s} ];
                     const p = v.map(v => {
-                        const r1 = Math3D.rotateX(v.y, v.z, this.ax), r2 = Math3D.rotateY(v.x, r1.z, this.ay);
+                        const r1 = Math3D.rotateX(v.y, v.z, this.ax);
+                        const r2 = Math3D.rotateY(v.x, r1.z, this.ay);
                         return Math3D.project(r2.x + this.x, r1.y + this.y, r2.z + this.z, cx, 0);
                     });
-                    const e = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+                    const e = [ [0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7] ];
+                    
                     ctx.strokeStyle = `hsla(${STATE.currentHue}, 100%, 80%, 0.6)`; ctx.lineWidth = 1.5; ctx.beginPath();
-                    e.forEach(e => { ctx.moveTo(p[e[0]].x, p[e[0]].y); ctx.lineTo(p[e[1]].x, p[e[1]].y); });
+                    e.forEach(edge => { ctx.moveTo(p[edge[0]].x, p[edge[0]].y); ctx.lineTo(p[edge[1]].x, p[edge[1]].y); });
                     ctx.stroke();
+                    
                     ctx.fillStyle = `hsla(${STATE.currentHue}, 100%, 50%, 0.05)`; ctx.beginPath();
                     ctx.moveTo(p[4].x, p[4].y); ctx.lineTo(p[5].x, p[5].y); ctx.lineTo(p[6].x, p[6].y); ctx.lineTo(p[7].x, p[7].y); ctx.fill();
                 }
@@ -737,14 +1035,17 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
                     this.x = CONFIG.LOGICAL_WIDTH / 2; this.reset(pos);
                 }
                 get radius() { return currentPhysics.size + this.sizeRatio * (currentPhysics.size * 0.9); }
+                
                 reset(loc) {
                     const cx = CONFIG.LOGICAL_WIDTH / 2;
-                    if (loc === 'random') { this.y = Math.random() * CONFIG.LOGICAL_HEIGHT; this.temp = 0.5; this.vy = (Math.random() - 0.5) * 10; this.state = 'floating'; }
-                    else if (loc === 'bottom') { this.y = 830 - Math.random() * 20; this.temp = 0.9 + Math.random() * 0.1; this.vy = 0; this.state = 'heating'; this.x = cx + (Math.random() - 0.5) * 50; }
+                    if (loc === 'random') { this.y = Math.random() * CONFIG.LOGICAL_HEIGHT; this.temp = 0.5; this.vy = (Math.random() - 0.5) * 10; this.state = 'floating'; } 
+                    else if (loc === 'bottom') { this.y = 830 - Math.random() * 20; this.temp = 0.9 + Math.random() * 0.1; this.vy = 0; this.state = 'heating'; this.x = cx + (Math.random() - 0.5) * 50; } 
                     else { this.y = 270 + Math.random() * 20; this.temp = Math.random() * 0.1; this.vy = 0; this.state = 'cooling'; this.x = cx + (Math.random() - 0.5) * 40; }
                 }
+                
                 update(top, bot, cx) {
-                    const sm = currentPhysics.speed / 5;
+                    const sm = (currentPhysics.speed / 100) * 3;
+                    
                     if (this.state === 'heating') {
                         this.temp += 0.01 * sm * STATE.timeScale; this.vy = 0; this.x = cx + (Math.random() - 0.5) * 5;
                         if (this.temp >= 1.2 || Math.random() < 0.01 * STATE.timeScale) { this.state = 'rising'; this.vy = -5 * sm; }
@@ -764,19 +1065,21 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
                     
                     if (this.y < top + 25 && this.vy < 0) { this.y = top + 25; this.state = 'cooling'; this.temp = 0.2; }
                     if (this.y > bot - 25 && this.vy > 0) { this.y = bot - 25; this.state = 'heating'; this.temp = 0.8; }
-                    if (u > 0.4 && u < 0.6 && Math.abs(this.vy) < 10) this.vy += (this.vy !== 0 ? Math.sign(this.vy) : (Math.random() > 0.5 ? 1 : -1)) * 20 * STATE.DT * sm;
+                    if (u > 0.4 && u < 0.6 && Math.abs(this.vy) < 10) { this.vy += (this.vy !== 0 ? Math.sign(this.vy) : (Math.random() > 0.5 ? 1 : -1)) * 20 * STATE.DT * sm; }
                     
                     this.rotX += 0.01 * STATE.timeScale; this.rotY += 0.015 * STATE.timeScale;
                 }
+                
                 draw(ctx) {
-                    const t = Utils.clamp(this.temp, 0, 1), r = this.radius, [c1, c2] = currentBlobTheme;
+                    const t = Utils.clamp(this.temp, 0, 1); const r = this.radius; const [c1, c2] = currentBlobTheme;
                     const rgb = `${Math.floor(c1[0] + (c2[0] - c1[0]) * t)}, ${Math.floor(c1[1] + (c2[1] - c1[1]) * t)}, ${Math.floor(c1[2] + (c2[2] - c1[2]) * t)}`;
                     
                     const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, r * 1.5);
                     grad.addColorStop(0, `rgba(${rgb}, 0.5)`); grad.addColorStop(1, `rgba(${rgb}, 0.0)`);
-                    
                     ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(this.x, this.y, r * 1.5, 0, Math.PI * 2); ctx.fill();
+                    
                     ctx.strokeStyle = `rgba(${rgb}, 0.8)`; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI * 2); ctx.stroke();
+                    
                     ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotX * 0.2); ctx.lineWidth = 1; ctx.strokeStyle = `rgba(${rgb}, 0.4)`;
                     ctx.beginPath(); ctx.ellipse(0, 0, r, r * 0.4, this.rotY, 0, Math.PI * 2); ctx.stroke();
                     ctx.beginPath(); ctx.ellipse(0, 0, r * 0.4, r, this.rotY, 0, Math.PI * 2); ctx.stroke();
@@ -784,11 +1087,19 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
                 }
             }
 
-            // --- CANVAS & MOTEUR RENDU ---
+            /* =====================================================================
+               GESTIONNAIRE CANVAS (RENDU)
+            ===================================================================== */
             const CanvasManager = (() => {
-                const canvas = document.getElementById(CONFIG.CANVAS_ID), ctx = canvas.getContext('2d');
-                const miniCanvas = document.getElementById(CONFIG.MINI_CANVAS_ID), miniCtx = miniCanvas.getContext('2d');
-                const cx = CONFIG.LOGICAL_WIDTH / 2, B_TOP = 250, B_BOT = 850, B_TW = 55, B_BW = 120, HORIZON = CONFIG.LOGICAL_HEIGHT * 0.85;
+                const canvas = document.getElementById(CONFIG.CANVAS_ID);
+                const ctx = canvas.getContext('2d');
+                const miniCanvas = document.getElementById(CONFIG.MINI_CANVAS_ID);
+                const miniCtx = miniCanvas.getContext('2d');
+                
+                const cx = CONFIG.LOGICAL_WIDTH / 2;
+                const B_TOP = 250, B_BOT = 850, B_TW = 55, B_BW = 120;
+                const HORIZON = CONFIG.LOGICAL_HEIGHT * 0.85;
+                
                 let stars = [], blobs = [], blocks = [];
 
                 const resize = () => {
@@ -806,7 +1117,8 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
 
                 const drawBottleWireframe = () => {
                     ctx.lineCap = "round"; ctx.lineJoin = "round";
-                    const neon = `hsla(${STATE.currentHue}, 100%, 70%, 1.0)`, darkNeon = `hsla(${STATE.currentHue}, 100%, 50%, 0.3)`;
+                    const neon = `hsla(${STATE.currentHue}, 100%, 70%, 1.0)`;
+                    const darkNeon = `hsla(${STATE.currentHue}, 100%, 50%, 0.3)`;
                     
                     ctx.lineWidth = 1; ctx.strokeStyle = darkNeon;
                     for (let i = 1; i < 6; i++) {
@@ -828,44 +1140,107 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
                 const drawHardwareWireframe = () => {
                     const neon = `hsla(${STATE.currentHue}, 100%, 70%, 1.0)`;
                     ctx.strokeStyle = neon; ctx.lineWidth = 2; ctx.shadowColor = neon; ctx.shadowBlur = 10;
+                    
+                    // Haut de la lampe
                     ctx.beginPath(); ctx.ellipse(cx, B_TOP - 80, B_TW - 15, 6, 0, 0, Math.PI * 2);
                     ctx.moveTo(cx - B_TW, B_TOP); ctx.lineTo(cx + B_TW, B_TOP);
                     ctx.moveTo(cx - B_TW + 5, B_TOP); ctx.lineTo(cx - B_TW + 15, B_TOP - 80);
                     ctx.moveTo(cx + B_TW - 5, B_TOP); ctx.lineTo(cx + B_TW - 15, B_TOP - 80); ctx.stroke();
+                    
                     ctx.beginPath(); ctx.moveTo(cx, B_TOP - 80); ctx.lineTo(cx, B_TOP - 110); ctx.stroke();
                     ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(cx, B_TOP - 110, 3, 0, Math.PI * 2); ctx.fill();
                     
-                    ctx.beginPath(); ctx.ellipse(cx, B_BOT, B_BW + 5, 15, 0, 0, Math.PI * 2);
-                    ctx.moveTo(cx + 170, B_BOT + 160); ctx.ellipse(cx, B_BOT + 160, 170, 20, 0, 0, Math.PI * 2); ctx.stroke();
-                    ctx.beginPath(); ctx.moveTo(cx - B_BW - 5, B_BOT); ctx.lineTo(cx - 170, B_BOT + 160);
-                    ctx.moveTo(cx + B_BW + 5, B_BOT); ctx.lineTo(cx + 170, B_BOT + 160); ctx.stroke();
-                    
-                    ctx.lineWidth = 1; ctx.strokeStyle = `hsla(${STATE.currentHue}, 100%, 50%, 0.3)`; ctx.shadowBlur = 0;
-                    for (let i = -4; i <= 4; i++) {
-                        if (i === 0) continue; ctx.beginPath();
-                        ctx.moveTo(cx + i * 20, B_BOT + 5); ctx.lineTo(cx + i * 35, B_BOT + 155); ctx.stroke();
+                    if (STATE.baseType === 2 || STATE.baseType === 'rocket') {
+                        // SOCLE ROCKET
+                        ctx.beginPath(); ctx.ellipse(cx, B_BOT, B_BW + 5, 15, 0, 0, Math.PI * 2);
+                        ctx.moveTo(cx + 170, B_BOT + 150); ctx.ellipse(cx, B_BOT + 150, 170, 20, 0, 0, Math.PI * 2); ctx.stroke();
+                        
+                        ctx.beginPath(); ctx.moveTo(cx - B_BW - 5, B_BOT); ctx.lineTo(cx - 170, B_BOT + 150);
+                        ctx.moveTo(cx + B_BW + 5, B_BOT); ctx.lineTo(cx + 170, B_BOT + 150); ctx.stroke();
+                        
+                        ctx.lineWidth = 1; ctx.strokeStyle = `hsla(${STATE.currentHue}, 100%, 50%, 0.3)`; ctx.shadowBlur = 0;
+                        for (let i = -4; i <= 4; i++) {
+                            if (i === 0) continue; ctx.beginPath();
+                            ctx.moveTo(cx + i * 20, B_BOT + 5); ctx.lineTo(cx + i * 35, B_BOT + 145); ctx.stroke();
+                        }
+                    } else if (STATE.baseType === 3 || STATE.baseType === 'sablier') {
+                        // SOCLE SABLIER
+                        const midY = B_BOT + 75, endY = B_BOT + 150, midW = 65, endW = 150;  
+                        ctx.beginPath(); ctx.ellipse(cx, B_BOT, B_BW + 5, 15, 0, 0, Math.PI * 2); ctx.stroke();
+                        ctx.beginPath(); ctx.ellipse(cx, midY, midW, 8, 0, 0, Math.PI * 2); ctx.stroke();
+                        ctx.beginPath(); ctx.ellipse(cx, endY, endW, 18, 0, 0, Math.PI * 2); ctx.stroke();
+                        
+                        ctx.beginPath(); ctx.moveTo(cx - B_BW - 5, B_BOT); ctx.lineTo(cx - midW, midY); ctx.lineTo(cx - endW, endY);
+                        ctx.moveTo(cx + B_BW + 5, B_BOT); ctx.lineTo(cx + midW, midY); ctx.lineTo(cx + endW, endY); ctx.stroke();
+                        
+                        ctx.lineWidth = 1; ctx.strokeStyle = `hsla(${STATE.currentHue}, 100%, 50%, 0.3)`; ctx.shadowBlur = 0;
+                        for (let i = -4; i <= 4; i++) {
+                            if (i === 0) continue; ctx.beginPath();
+                            ctx.moveTo(cx + i * ((B_BW + 5) / 4.5), B_BOT + Math.abs(i) * 1.5); 
+                            ctx.lineTo(cx + i * (midW / 4.5), midY + Math.abs(i) * 0.8); 
+                            ctx.lineTo(cx + i * (endW / 4.5), endY + Math.abs(i) * 1.8); ctx.stroke();
+                        }
+                    } else {
+                        // SOCLE SOLIDE
+                        const t1H = 30, t1W = B_BW + 5, t2H = 100, t2W = 165, t3H = 150, t3W = 165; 
+                        
+                        ctx.beginPath(); ctx.ellipse(cx, B_BOT, t1W, 15, 0, 0, Math.PI * 2); ctx.stroke();
+                        ctx.beginPath(); ctx.ellipse(cx, B_BOT + t1H, t1W, 15, 0, 0, Math.PI * 2); ctx.stroke();
+                        ctx.beginPath(); ctx.ellipse(cx, B_BOT + t2H, t2W, 20, 0, 0, Math.PI * 2); ctx.stroke();
+                        ctx.beginPath(); ctx.ellipse(cx, B_BOT + t3H, t3W, 20, 0, 0, Math.PI * 2); ctx.stroke();
+                        
+                        ctx.beginPath(); ctx.moveTo(cx - t1W, B_BOT); ctx.lineTo(cx - t1W, B_BOT + t1H);
+                        ctx.moveTo(cx + t1W, B_BOT); ctx.lineTo(cx + t1W, B_BOT + t1H);
+                        ctx.moveTo(cx - t1W, B_BOT + t1H); ctx.lineTo(cx - t2W, B_BOT + t2H);
+                        ctx.moveTo(cx + t1W, B_BOT + t1H); ctx.lineTo(cx + t2W, B_BOT + t2H);
+                        ctx.moveTo(cx - t2W, B_BOT + t2H); ctx.lineTo(cx - t3W, B_BOT + t3H);
+                        ctx.moveTo(cx + t2W, B_BOT + t2H); ctx.lineTo(cx + t3W, B_BOT + t3H); ctx.stroke();
+                        
+                        ctx.lineWidth = 1; ctx.strokeStyle = `hsla(${STATE.currentHue}, 100%, 50%, 0.3)`; ctx.shadowBlur = 0;
+                        for (let i = -4; i <= 4; i++) {
+                            if (i === 0) continue; ctx.beginPath();
+                            ctx.moveTo(cx + i * (t1W / 4.5), B_BOT + t1H + Math.abs(i) * 1.5); 
+                            ctx.lineTo(cx + i * (t2W / 4.5), B_BOT + t2H + Math.abs(i) * 2); 
+                            ctx.lineTo(cx + i * (t3W / 4.5), B_BOT + t3H + Math.abs(i) * 2); ctx.stroke();
+                        }
                     }
                 };
 
-                return { canvas, ctx, miniCanvas, miniCtx, cx, B_TOP, B_BOT, HORIZON, stars, blobs, blocks, resize, defineBottlePath, drawBottleWireframe, drawHardwareWireframe };
+                const drawTvFilter = (time) => {
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; ctx.fillRect(cx - 200, B_TOP, 400, B_BOT - B_TOP);
+                    ctx.globalCompositeOperation = 'overlay';
+                    const scanlineHeight = 3; const offset = Math.floor(time * 0.02) % (scanlineHeight * 2);
+                    for (let y = B_TOP - 20; y <= B_BOT + 20; y += scanlineHeight * 2) {
+                        ctx.fillStyle = `rgba(0, 0, 0, 0.45)`; ctx.fillRect(cx - 200, y + offset, 400, scanlineHeight);
+                    }
+                    ctx.globalCompositeOperation = 'screen';
+                    ctx.fillStyle = `hsla(${STATE.currentHue}, 80%, 60%, ${0.05 + Math.sin(time * 0.002) * 0.02})`;
+                    ctx.fillRect(cx - 200, B_TOP, 400, B_BOT - B_TOP);
+                    ctx.restore();
+                };
+
+                return { canvas, ctx, miniCanvas, miniCtx, cx, B_TOP, B_BOT, HORIZON, stars, blobs, blocks, resize, defineBottlePath, drawBottleWireframe, drawHardwareWireframe, drawTvFilter };
             })();
 
-            // --- PHYSIQUE & PRESETS MANAGER ---
+            /* =====================================================================
+               GESTIONNAIRE PHYSIQUE & PRESETS
+            ===================================================================== */
             const PhysicsManager = (() => {
                 const syncSliders = (p) => {
-                    ['blob', 'speed', 'size', 'wobble'].forEach(k => {
-                        const val = k === 'blob' ? p.count : p[k];
-                        document.getElementById(`${k}Slider`).value = val;
-                        document.getElementById(`${k === 'blob' ? 'blobCount' : k}Val`).textContent = val;
+                    const mapping = { density: p.count, speed: p.speed, size: p.size, wobble: p.wobble };
+                    Object.entries(mapping).forEach(([k, val]) => {
+                        document.getElementById(`slider-${k}`).value = val;
+                        document.getElementById(`val-${k}`).textContent = val;
                     });
                 };
 
                 const updateCount = (n) => {
                     n = Utils.clamp(parseInt(n, 10), 5, 100); if (isNaN(n)) return;
                     const diff = n - CanvasManager.blobs.length;
-                    if (diff > 0) for (let i = 0; i < diff; i++) CanvasManager.blobs.push(new Blob(i % 2 === 0 ? 'bot' : 'top'));
-                    else if (diff < 0) CanvasManager.blobs.splice(n, -diff);
-                    currentPhysics.count = n; document.getElementById('blobCountVal').textContent = n;
+                    if (diff > 0) { for (let i = 0; i < diff; i++) CanvasManager.blobs.push(new Blob(i % 2 === 0 ? 'bot' : 'top')); } 
+                    else if (diff < 0) { CanvasManager.blobs.splice(n, -diff); }
+                    currentPhysics.count = n; document.getElementById('val-density').textContent = n;
                 };
 
                 const applyPreset = (idx) => {
@@ -874,136 +1249,201 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
                     syncSliders(p); updateCount(p.count);
                 };
 
-                document.getElementById('blobSlider').addEventListener('input', e => updateCount(e.target.value));
+                document.getElementById('slider-density').addEventListener('input', e => updateCount(e.target.value));
                 ['speed', 'size', 'wobble'].forEach(k => {
-                    document.getElementById(`${k}Slider`).addEventListener('input', e => {
+                    document.getElementById(`slider-${k}`).addEventListener('input', e => {
                         currentPhysics[k] = parseFloat(e.target.value);
-                        document.getElementById(`${k}Val`).textContent = currentPhysics[k];
+                        document.getElementById(`val-${k}`).textContent = currentPhysics[k];
                     });
                 });
 
                 return { applyPreset };
             })();
 
-            // --- EVENTS UI STATIQUES ---
-            document.getElementById('themeSelect').addEventListener('change', e => LampController.switchLamp(parseInt(e.target.value, 10) - 1));
-            document.getElementById('mobileMenuCheckbox').addEventListener('change', e => document.getElementById('lamp-nav').classList.toggle('show-nav', e.target.checked));
-            document.getElementById('collabMenuCheckbox').addEventListener('change', e => document.getElementById('ui-collab').style.display = e.target.checked ? 'block' : 'none');
-
-            document.getElementById('collabDropdown').addEventListener('change', (e) => {
-                const val = parseInt(e.target.value, 10);
-                const desc = document.getElementById('collabDesc');
-                if (!isNaN(val) && val >= 0 && val < SXN_PRESETS.length) {
-                    PhysicsManager.applyPreset(val);
-                    desc.textContent = SXN_PRESETS[val].desc;
-                } else {
-                    desc.textContent = "Sélectionnez un preset pour voir les détails.";
-                }
+            /* =====================================================================
+               ÉVÉNEMENTS UI STATIQUES
+            ===================================================================== */
+            document.getElementById('select-theme').addEventListener('change', e => { LampController.switchLamp(parseInt(e.target.value, 10) - 1); });
+            
+            document.getElementById('slider-socle').addEventListener('input', e => {
+                STATE.baseType = parseInt(e.target.value, 10);
+                const names = ["", "SOLIDE", "ROCKET", "SABLIER"];
+                document.getElementById('val-socle').textContent = STATE.baseType + " - " + names[STATE.baseType];
             });
 
-            // --- CONTRÔLEUR DE LAMPES ---
+            document.getElementById('cb-extensions').addEventListener('change', e => {
+                const p = document.getElementById('panel-extensions'); p.style.display = e.target.checked ? 'block' : 'none';
+                if(e.target.checked) { p.classList.remove('collapsed'); p.querySelector('.icon-toggle').textContent = '[-]'; }
+            });
+            document.getElementById('cb-mobile-nav').addEventListener('change', e => document.getElementById('nav-bottom').classList.toggle('show-nav', e.target.checked));
+            document.getElementById('cb-collab').addEventListener('change', e => {
+                const p = document.getElementById('panel-collab'); p.style.display = e.target.checked ? 'block' : 'none';
+                if(e.target.checked) { p.classList.remove('collapsed'); p.querySelector('.icon-toggle').textContent = '[-]'; }
+            });
+            document.getElementById('cb-palette').addEventListener('change', e => document.getElementById('panel-palette').style.display = e.target.checked ? 'block' : 'none');
+            document.getElementById('cb-socle').addEventListener('change', e => {
+                const p = document.getElementById('panel-socle'); p.style.display = e.target.checked ? 'block' : 'none';
+                if(e.target.checked) { p.classList.remove('collapsed'); p.querySelector('.icon-toggle').textContent = '[-]'; }
+            });
+            document.getElementById('cb-tv-filter').addEventListener('change', e => STATE.isTvFilterActive = e.target.checked);
+
+            document.getElementById('select-collab').addEventListener('change', (e) => {
+                const val = parseInt(e.target.value, 10); const desc = document.getElementById('desc-collab');
+                if (!isNaN(val) && val >= 0 && val < SXN_PRESETS.length) {
+                    PhysicsManager.applyPreset(val); desc.textContent = SXN_PRESETS[val].desc;
+                } else { desc.textContent = "Sélectionnez un preset pour voir les détails."; }
+            });
+
+            /* =====================================================================
+               CONTRÔLEUR DE LAMPES
+            ===================================================================== */
             const LampController = (() => {
                 let miniB = [], miniT = 0;
 
                 const initMini = () => {
-                    miniB = []; for(let i=0; i<6; i++) miniB.push({x:30, y:15+(i/6)*50, r:6+Math.random()*5, vy:(Math.random()-0.5)*0.4, temp:Math.random(), rot:Math.random()*Math.PI*2});
+                    miniB = []; 
+                    for(let i=0; i<6; i++) miniB.push({ x: 30, y: 15 + (i/6)*50, r: 6 + Math.random()*5, vy: (Math.random()-0.5)*0.4, temp: Math.random(), rot: Math.random()*Math.PI*2 });
                 };
 
                 const drawMini = (l) => {
-                    miniT += 0.016 * STATE.timeScale; const ctx = CanvasManager.miniCtx, top = 8, bot = 68, cx = 30, wT = 12, wB = 20;
+                    miniT += 0.016 * STATE.timeScale; const ctx = CanvasManager.miniCtx; const top = 8, bot = 68, cx = 30, wT = 12, wB = 20;
+                    
                     ctx.clearRect(0,0,60,80); ctx.fillStyle = '#010103'; ctx.fillRect(0,0,60,80);
                     ctx.beginPath(); ctx.moveTo(cx-wT, top); ctx.lineTo(cx+wT, top); ctx.quadraticCurveTo(cx+wB+3, (top+bot)/2, cx+wB, bot);
                     ctx.bezierCurveTo(cx+wB, bot+4, cx-wB, bot+4, cx-wB, bot); ctx.quadraticCurveTo(cx-wB-3, (top+bot)/2, cx-wT, top); ctx.closePath();
                     ctx.fillStyle = 'rgba(0,0,0,0.7)'; ctx.fill();
 
-                    const [c1, c2] = l.blobs;
+                    const [c1, c2] = currentBlobTheme;
                     miniB.forEach(b => {
                         b.y += b.vy * STATE.timeScale; b.temp = (Math.sin(miniT*0.8+b.rot)+1)/2;
                         if (b.y < top+b.r) { b.y = top+b.r; b.vy = Math.abs(b.vy); } if (b.y > bot-b.r) { b.y = bot-b.r; b.vy = -Math.abs(b.vy); }
                         b.x = cx + Math.sin(miniT*1.2+b.rot) * (wB-b.r-2);
-                        const t = b.temp, rgb = `${Math.floor(c1[0]+(c2[0]-c1[0])*t)},${Math.floor(c1[1]+(c2[1]-c1[1])*t)},${Math.floor(c1[2]+(c2[2]-c1[2])*t)}`;
+                        
+                        const rgb = `${Math.floor(c1[0]+(c2[0]-c1[0])*b.temp)},${Math.floor(c1[1]+(c2[1]-c1[1])*b.temp)},${Math.floor(c1[2]+(c2[2]-c1[2])*b.temp)}`;
                         const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r*1.4);
                         grad.addColorStop(0, `rgba(${rgb},0.6)`); grad.addColorStop(1, `rgba(${rgb},0)`);
                         ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(b.x, b.y, b.r*1.4, 0, Math.PI*2); ctx.fill();
                     });
 
-                    ctx.strokeStyle = `hsla(${l.hue}, 100%, 70%, 0.85)`; ctx.lineWidth = 1; ctx.shadowColor = `hsla(${l.hue}, 100%, 50%, 0.6)`; ctx.shadowBlur = 4;
+                    ctx.strokeStyle = `hsla(${STATE.currentHue}, 100%, 70%, 0.85)`; ctx.lineWidth = 1; ctx.shadowColor = `hsla(${STATE.currentHue}, 100%, 50%, 0.6)`; ctx.shadowBlur = 4;
                     ctx.beginPath(); ctx.moveTo(cx-wT, top); ctx.lineTo(cx+wT, top); ctx.quadraticCurveTo(cx+wB+3, (top+bot)/2, cx+wB, bot);
                     ctx.bezierCurveTo(cx+wB, bot+4, cx-wB, bot+4, cx-wB, bot); ctx.quadraticCurveTo(cx-wB-3, (top+bot)/2, cx-wT, top); ctx.closePath();
                     ctx.stroke(); ctx.shadowBlur = 0;
                 };
 
                 const updateUI = () => {
-                    document.getElementById('lamp-name').textContent = currentLamp.name;
-                    const dots = document.getElementById('lamp-dots'); dots.textContent = '';
+                    document.getElementById('label-lamp-name').textContent = currentLamp.name;
+                    const dots = document.getElementById('container-lamp-dots'); dots.textContent = '';
                     LAMPS.forEach((_, i) => {
-                        const d = document.createElement('div'); d.className = 'lamp-dot' + (i === STATE.currentLampIndex ? ' active' : '');
-                        dots.appendChild(d);
+                        const d = document.createElement('div'); d.className = 'dot-lamp' + (i === STATE.currentLampIndex ? ' active' : ''); dots.appendChild(d);
                     });
                 };
 
                 const switchLamp = (idx) => {
-                    if (STATE.isTransitioning || isNaN(idx)) return; STATE.isTransitioning = true;
-                    document.getElementById('fade-overlay').classList.add('fading');
+                    if (STATE.isTransitioning || isNaN(idx) || idx < 0 || idx >= LAMPS.length) return; 
+                    STATE.isTransitioning = true;
+                    document.getElementById('overlay-fade').classList.add('fading');
+                    
                     setTimeout(() => {
-                        STATE.currentLampIndex = idx; currentLamp = LAMPS[idx];
-                        STATE.targetHue = currentLamp.hue; currentBlobTheme = currentLamp.blobs;
+                        STATE.currentLampIndex = idx; currentLamp = LAMPS[idx]; STATE.targetHue = currentLamp.hue; currentBlobTheme = currentLamp.blobs;
                         PhysicsManager.applyPreset(idx); initMini(); updateUI();
-                        const select = document.getElementById('themeSelect'); if (select) select.value = idx + 1;
-                        document.getElementById('fade-overlay').classList.remove('fading');
+                        
+                        const select = document.getElementById('select-theme'); if (select) select.value = idx + 1;
+                        
+                        // MAJ Modulaire de la palette
+                        PaletteManager.updateActiveState(idx);
+                        
+                        document.getElementById('overlay-fade').classList.remove('fading');
                         setTimeout(() => STATE.isTransitioning = false, 400);
                     }, 400);
                 };
 
-                document.getElementById('prevLamp').addEventListener('click', () => switchLamp((STATE.currentLampIndex - 1 + LAMPS.length) % LAMPS.length));
-                document.getElementById('nextLamp').addEventListener('click', () => switchLamp((STATE.currentLampIndex + 1) % LAMPS.length));
+                document.getElementById('btn-prev-lamp').addEventListener('click', () => switchLamp((STATE.currentLampIndex - 1 + LAMPS.length) % LAMPS.length));
+                document.getElementById('btn-next-lamp').addEventListener('click', () => switchLamp((STATE.currentLampIndex + 1) % LAMPS.length));
 
                 return { initMini, drawMini, updateUI, switchLamp };
             })();
 
-            // --- MODALES ---
-            const ModalManager = (() => {
-                const modals = { info: document.getElementById('infoModal'), cgu: document.getElementById('cguModal'), credits: document.getElementById('creditsModal') };
-                const open = (k) => { if(modals[k]) { modals[k].classList.add('open'); modals[k].setAttribute('aria-hidden', 'false'); }};
-                const closeAll = () => Object.values(modals).forEach(m => { m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); });
-
-                ['info', 'cgu', 'credits'].forEach(k => document.getElementById(`${k}Btn`).addEventListener('click', (e) => { e.preventDefault(); open(k); }));
-                Object.entries(modals).forEach(([k, m]) => {
-                    m.addEventListener('click', e => { if (e.target.getAttribute('data-close') === k) closeAll(); });
-                    m.addEventListener('touchmove', e => { if (m.classList.contains('open')) e.preventDefault(); }, {passive: false});
-                });
-                window.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
-            })();
-
-            // --- MOTEUR PRINCIPAL ---
+            /* =====================================================================
+               MOTEUR PRINCIPAL (INIT & LOOP)
+            ===================================================================== */
             const Engine = (() => {
+                let animationFrameId;
+
                 const init = () => {
                     CanvasManager.resize(); window.addEventListener('resize', CanvasManager.resize);
+                    
                     for (let i = 0; i < 50; i++) CanvasManager.stars.push(new Star());
                     for (let i = 0; i < currentPhysics.count; i++) CanvasManager.blobs.push(new Blob(i % 2 === 0 ? 'bot' : 'top'));
                     for (let i = 0; i < CONFIG.BLOCK_COUNT; i++) CanvasManager.blocks.push(new Cube3D(CanvasManager.B_TOP, CanvasManager.B_BOT));
 
+                    // ETAT DE DÉPART (Seul System Control visible en mode réduit)
+                    document.getElementById('select-theme').value = "10";
+                    document.getElementById('slider-socle').value = "1";
+                    document.getElementById('val-socle').textContent = "1 - SOLIDE";
+
+                    // Initialiser les sliders ET les affichages avec les bonnes valeurs
+                    document.getElementById('slider-density').value = currentPhysics.count;
+                    document.getElementById('val-density').textContent = currentPhysics.count;
+                    
+                    document.getElementById('slider-speed').value = currentPhysics.speed;
+                    document.getElementById('val-speed').textContent = currentPhysics.speed;
+                    
+                    document.getElementById('slider-size').value = currentPhysics.size;
+                    document.getElementById('val-size').textContent = currentPhysics.size;
+                    
+                    document.getElementById('slider-wobble').value = currentPhysics.wobble;
+                    document.getElementById('val-wobble').textContent = currentPhysics.wobble;
+
+                    // On s'assure que System Control est réduit au démarrage
+                    document.getElementById('panel-system').classList.add('collapsed');
+                    const systemIcon = document.getElementById('panel-system').querySelector('.icon-toggle');
+                    if (systemIcon) systemIcon.textContent = '[+]';
+
+                    document.getElementById('cb-tv-filter').checked = true;
+                    STATE.isTvFilterActive = true;
+                    
+                    // On masque tous les autres
+                    document.getElementById('cb-extensions').checked = false;
+                    document.getElementById('panel-extensions').style.display = 'none';
+
+                    document.getElementById('cb-palette').checked = false;
+                    document.getElementById('panel-palette').style.display = 'none';
+
+                    document.getElementById('cb-socle').checked = false;
+                    document.getElementById('panel-socle').style.display = 'none';
+
+                    document.getElementById('cb-collab').checked = false;
+                    document.getElementById('panel-collab').style.display = 'none';
+
                     LampController.initMini(); LampController.updateUI();
 
-                    const collabDrop = document.getElementById('collabDropdown'); 
-                    collabDrop.textContent = '';
-                    const defOpt = document.createElement('option');
-                    defOpt.value = "-1"; defOpt.textContent = "-- CHOISIR UN MOTEUR --";
-                    collabDrop.appendChild(defOpt);
+                    const collabDrop = document.getElementById('select-collab'); collabDrop.textContent = '';
+                    const defOpt = document.createElement('option'); defOpt.value = "-1"; defOpt.textContent = "-- CHOISIR UN MOTEUR --"; collabDrop.appendChild(defOpt);
+                    SXN_PRESETS.forEach((p, i) => { const opt = document.createElement('option'); opt.value = i.toString(); opt.textContent = p.name; collabDrop.appendChild(opt); });
 
-                    SXN_PRESETS.forEach((p, i) => {
-                        const opt = document.createElement('option');
-                        opt.value = i.toString(); opt.textContent = p.name;
-                        collabDrop.appendChild(opt);
-                    });
+                    // Initialisation modulaire de la palette
+                    PaletteManager.init();
+                    PaletteManager.updateActiveState(STATE.currentLampIndex);
 
                     window.addEventListener('keydown', e => {
-                        if (e.key >= '1' && e.key <= '8') LampController.switchLamp(parseInt(e.key, 10) - 1);
+                        if (e.key >= '1' && e.key <= '9') LampController.switchLamp(parseInt(e.key, 10) - 1);
+                        if (e.key.toLowerCase() === 'c') LampController.switchLamp(9); 
                         if (e.key === 'ArrowLeft') LampController.switchLamp((STATE.currentLampIndex - 1 + LAMPS.length) % LAMPS.length);
                         if (e.key === 'ArrowRight') LampController.switchLamp((STATE.currentLampIndex + 1) % LAMPS.length);
                     });
 
-                    requestAnimationFrame(t => { STATE.lastTime = t; loop(t); });
+                    // [PERFORMANCE] API Visibility : Met en pause le rendu si l'onglet est masqué
+                    document.addEventListener('visibilitychange', () => {
+                        if (document.hidden) {
+                            cancelAnimationFrame(animationFrameId);
+                        } else {
+                            STATE.lastTime = performance.now(); // Réinitialise le temps pour éviter un saut physique de la lave
+                            animationFrameId = requestAnimationFrame(loop);
+                        }
+                    });
+
+                    animationFrameId = requestAnimationFrame(t => { STATE.lastTime = t; loop(t); });
                 };
 
                 const loop = (t) => {
@@ -1012,16 +1452,23 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
                     if (STATE.DT > 0.1 || STATE.DT < 0.001) STATE.DT = 1 / CONFIG.BASE_FPS;
                     STATE.timeScale = STATE.DT * CONFIG.BASE_FPS;
 
-                    STATE.currentHue = Utils.lerp(STATE.currentHue, STATE.targetHue, 1 - Math.pow(0.95, STATE.timeScale));
+                    if (currentLamp.dynamicHue) {
+                        STATE.currentHue = (t * 0.02) % 360; STATE.targetHue = STATE.currentHue;
+                        currentBlobTheme = [Utils.hslToRgb(STATE.currentHue, 1, 0.4), Utils.hslToRgb(STATE.currentHue, 1, 0.7)];
+                    } else {
+                        STATE.currentHue = Utils.lerp(STATE.currentHue, STATE.targetHue, 1 - Math.pow(0.95, STATE.timeScale));
+                    }
+                    
                     document.documentElement.style.setProperty('--hue', Math.floor(STATE.currentHue));
 
                     const { ctx, cx, B_TOP, B_BOT, HORIZON } = CanvasManager;
-
                     ctx.fillStyle = "#010103"; ctx.fillRect(0, 0, CONFIG.LOGICAL_WIDTH, CONFIG.LOGICAL_HEIGHT);
+                    
                     CanvasManager.stars.forEach(s => { s.update(); s.draw(ctx); });
 
                     ctx.strokeStyle = `hsla(${STATE.currentHue}, 50%, 30%, 0.3)`; ctx.lineWidth = 1; ctx.beginPath();
-                    for (let i = -10; i <= 10; i++) { ctx.moveTo(cx + i * 100, HORIZON); ctx.lineTo(cx + i * 300, CONFIG.LOGICAL_HEIGHT); } ctx.stroke();
+                    for (let i = -10; i <= 10; i++) { ctx.moveTo(cx + i * 100, HORIZON); ctx.lineTo(cx + i * 300, CONFIG.LOGICAL_HEIGHT); } 
+                    ctx.stroke();
 
                     CanvasManager.drawBottleWireframe(); ctx.save(); CanvasManager.defineBottlePath(); ctx.clip();
                     ctx.fillStyle = "rgba(0,0,0,0.8)"; ctx.fill();
@@ -1031,10 +1478,13 @@ Résumé de la licence : https://creativecommons.org/licenses/by-nc/4.0/deed.fr
 
                     ctx.globalCompositeOperation = 'source-over';
                     CanvasManager.blocks.forEach(bk => { bk.update(B_TOP, B_BOT); bk.draw(ctx, cx); });
-                    ctx.restore();
 
+                    if (STATE.isTvFilterActive) CanvasManager.drawTvFilter(t);
+
+                    ctx.restore();
                     CanvasManager.drawHardwareWireframe(); LampController.drawMini(currentLamp);
-                    window.requestAnimationFrame(loop);
+                    
+                    animationFrameId = window.requestAnimationFrame(loop);
                 };
 
                 return { init };
