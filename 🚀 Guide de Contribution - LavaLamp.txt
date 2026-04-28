@@ -1,6 +1,6 @@
 🚀 Guide de Contribution 0.3 - LavaLamp
 
-Bienvenue. Ce guide explique comment contribuer au nouveau repo (j'ai delete l'ancien, crée celui ci qui passe en privé le temps d'augmenter mes skills, GitHub, bash, repo, sécurité etc :
+Bienvenue. Ce guide explique comment contribuer au repo
 
 https://github.com/floriouniverse/lavalamp
 Branche dédiée Collabs : 
