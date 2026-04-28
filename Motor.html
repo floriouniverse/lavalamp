@@ -1,0 +1,384 @@
+<!--
+===========================================================================
+FUTURE ENGINE VISUALIZER - outil moteur de fusion
+Description: Outil de visualisation technique du moteur de fusion.
+Licence : CC BY-NC 4.0 (Attribution - Pas d’Utilisation Commerciale)
+Auteurs originaux : ALAMBIC X EON GAMES | Roielf 
+===========================================================================
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';">
+    <meta name="referrer" content="no-referrer">
+    <title>MOTOR</title>
+    <style>
+        /* =========================================
+           VARIABLES & BASE 
+        ========================================= */
+        :root { 
+            --hue: 180; /* Cyan industriel par défaut */
+            --bg: #010103;
+        } 
+
+        body {
+            margin: 0; overflow: hidden; background-color: var(--bg);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex; height: 100vh;
+            -webkit-user-select: none; user-select: none;
+            color: hsla(var(--hue), 100%, 85%, 1);
+        }
+
+        /* =========================================
+           RENDER PIPELINE (CANVAS)
+        ========================================= */
+        main { flex: 1; display: flex; position: relative; width: 100vw; height: 100vh; }
+        .viewport { flex: 1; position: relative; border-right: 1px solid #111; overflow: hidden; }
+        
+        canvas { width: 100%; height: 100%; display: block; }
+        
+        #render { 
+            -webkit-filter: contrast(30) brightness(1.2); 
+            filter: contrast(30) brightness(1.2); 
+            background: var(--bg);
+        }
+
+        .tag { 
+            position: absolute; top: 15px; left: 15px; 
+            font-size: 10px; color: hsla(var(--hue), 100%, 50%, 0.8); 
+            letter-spacing: 4px; pointer-events: none; z-index: 10;
+            text-shadow: 0 0 10px hsla(var(--hue), 100%, 50%, 0.5);
+            background: rgba(0,0,0,0.5); padding: 5px 10px; border: 1px dashed hsla(var(--hue), 100%, 50%, 0.3);
+        }
+
+        .glass { position: absolute; inset: 0; pointer-events: none; z-index: 20; opacity: 0.15; filter: url(#n); mix-blend-mode: overlay; display: none; }
+        .tv { position: absolute; inset: 0; pointer-events: none; z-index: 30; display: none; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.3) 50%); background-size: 100% 3px; }
+
+        /* =========================================
+           PANNEAUX UI (DESIGN INDUSTRIEL)
+        ========================================= */
+        .panel {
+            position: absolute; z-index: 50; width: 300px; 
+            background: rgba(0, 0, 0, 0.6); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            border: 1px dashed hsla(var(--hue), 100%, 50%, 0.4); 
+            box-shadow: 0 0 20px hsla(var(--hue), 100%, 50%, 0.1); 
+            transition: left 0.4s ease, top 0.4s ease;
+            box-sizing: border-box; touch-action: none; 
+            top: 60px; left: 40px;
+        }
+
+        .panel::before, .panel::after {
+            content: ''; position: absolute; width: 10px; height: 10px;
+            border: 2px solid hsla(var(--hue), 100%, 70%, 1); pointer-events: none;
+        }
+        .panel::before { top: -1px; left: -1px; border-bottom: none; border-right: none; }
+        .panel::after { bottom: -1px; right: -1px; border-top: none; border-left: none; }
+
+        .panel-header {
+            padding: 16px 18px; border-bottom: 1px dashed hsla(var(--hue), 100%, 50%, 0.3);
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: move; font-size: 0.85em; letter-spacing: 1px; opacity: 0.9;
+            background: rgba(0,0,0,0.4); font-weight: bold;
+        }
+
+        .icon-toggle { cursor: pointer; padding: 4px; font-size: 1.3em; transition: transform 0.3s ease; }
+        .icon-toggle:hover { transform: scale(1.2); color: #fff; }
+
+        .panel-content { padding: 18px; transition: opacity 0.3s ease; }
+        .panel.collapsed .panel-content { display: none !important; opacity: 0; }
+
+        .label-section {
+            font-size: 0.75em; text-transform: uppercase; margin-top: 22px; margin-bottom: 12px;
+            display: block; opacity: 0.7; font-weight: bold; letter-spacing: 1px;
+        }
+        .panel-content > .label-section:first-child { margin-top: 0; }
+
+        /* =========================================
+           CONTRÔLES FORMULAIRES 
+        ========================================= */
+        .dropdown-theme {
+            width: 100%; background: rgba(0, 0, 0, 0.4); color: hsla(var(--hue), 100%, 90%, 1); 
+            border: 1px solid hsla(var(--hue), 100%, 50%, 0.4); 
+            padding: 12px 14px; margin-bottom: 18px; font-family: inherit; font-size: 0.9em; font-weight: bold; 
+            outline: none; cursor: pointer; -webkit-appearance: none; appearance: none;
+        }
+        .dropdown-theme option { background: #010103; }
+
+        .container-slider { margin-bottom: 16px; }
+        .info-slider { display: flex; justify-content: space-between; font-size: 0.8em; font-weight: bold; margin-bottom: 8px; }
+
+        input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; background: transparent; padding: 8px 0; }
+        input[type=range]::-webkit-slider-runnable-track { height: 6px; background: hsla(var(--hue), 100%, 50%, 0.3); border-radius: 3px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; height: 18px; width: 18px; background: #fff; margin-top: -6px; cursor: grab; border-radius: 50%; }
+        
+        .container-checkbox { display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; font-size: 0.88em; font-weight: bold; }
+        input[type=checkbox] {
+            -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border: 1px solid hsla(var(--hue), 100%, 50%, 0.7); 
+            margin-right: 14px; cursor: pointer; position: relative;
+        }
+        input[type=checkbox]:checked { background: hsla(var(--hue), 100%, 50%, 0.3); border-color: hsla(var(--hue), 100%, 50%, 1); }
+        input[type=checkbox]:checked::after { content: ''; position: absolute; top: 3px; left: 3px; right: 3px; bottom: 3px; background: #fff; }
+
+        /* =========================================
+           UI HAUT (BOUTONS & MODALES) 
+        ========================================= */
+        #nav-top { position: absolute; top: 15px; right: 15px; z-index: 60; display: flex; gap: 10px; }
+        .btn-top {
+            height: 34px; border: 1px solid hsla(var(--hue), 100%, 60%, 0.7); background: rgba(0,0,0,0.6); 
+            color: hsla(var(--hue), 100%, 85%, 1); font-family: inherit; font-weight: bold;
+            cursor: pointer; padding: 0 16px; border-radius: 17px; font-size: 0.8em;
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+        }
+        .btn-top:hover { background: rgba(0,0,0,0.8); box-shadow: 0 0 15px hsla(var(--hue), 100%, 50%, 0.3); }
+
+        .modal { position: fixed; inset: 0; z-index: 100; display: none; }
+        .modal.open { display: block; }
+        .backdrop-modal { position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+        .card-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 90vw; max-width: 500px; background: rgba(0, 0, 0, 0.85);
+            border: 1px dashed hsla(var(--hue), 100%, 50%, 0.5); color: #fff; border-radius: 8px;
+        }
+        .header-modal { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px dashed hsla(var(--hue), 100%, 50%, 0.3); background: rgba(0,0,0,0.5); }
+        .btn-close-modal { background: rgba(255, 60, 60, 0.2); border: 1px solid red; color: #fff; width: 30px; height: 30px; cursor: pointer; border-radius: 4px; }
+        .body-modal { padding: 20px; font-size: 0.9em; line-height: 1.5; }
+        
+        pre { background: #000; padding: 10px; border: 1px solid #333; overflow-x: auto; font-size: 0.8em; color: #888; }
+        pre b { color: hsla(var(--hue), 100%, 60%, 1); }
+    </style>
+</head>
+<body>
+
+<!-- SVG Noise Filter pour le Grain -->
+<svg style="position:absolute;width:0;height:0;"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3"/></filter></svg>
+
+<!-- Navigation Haut -->
+<div id="nav-top">
+    <button id="btn-info" class="btn-top">INFO</button>
+</div>
+
+<!-- Modale INFO -->
+<div id="modal-info" class="modal">
+    <div class="backdrop-modal" data-close="true"></div>
+    <div class="card-modal">
+        <div class="header-modal">
+            <span>INFORMATIONS SYSTEME</span>
+            <button class="btn-close-modal" data-close="true">X</button>
+        </div>
+        <div class="body-modal">
+            <p><strong>Moteur de Visualisation </strong></p>
+            <p>- Le moteur utilise deux canvas superposés.</p>
+            <p>- Le rendu de droite applique un filtre SVG (contrast + brightness) pour créer l'effet de fusion des métaballes (Blobs).</p>
+            <p>- Interface sécurisée : Clic droit et outils de développement bloqués.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Viewports Principaux -->
+<main>
+    <div class="viewport">
+        <canvas id="c1"></canvas>
+    </div>
+    <div class="viewport" id="render">
+        <div id="g" class="glass"></div>
+        <div id="t" class="tv"></div>
+        <canvas id="c2"></canvas>
+    </div>
+</main>
+
+<!-- Panneau de Contrôle Central -->
+<div id="panel-system" class="panel">
+    <div class="panel-header" id="header-system" title="Maintenez pour déplacer">
+        <span>ENGINE CONTROL</span>
+        <span class="icon-toggle" title="Réduire/Agrandir">[-]</span>
+    </div>
+    <div class="panel-content">
+        <span class="label-section">PROTOCOLES</span>
+        <select id="select-theme" class="dropdown-theme">
+            <option value="0">1 - CYBER</option>
+            <option value="1">2 - MATRICE</option>
+            <option value="2">3 - FLAMME</option>
+        </select>
+
+        <span class="label-section">PROPRIETES PHYSIQUES</span>
+        <div class="container-slider">
+            <div class="info-slider"><span>DIFFUSION</span><span id="val-diff">45</span></div>
+            <input type="range" id="slider-diff" min="20" max="70" value="45">
+        </div>
+        <div class="container-slider">
+            <div class="info-slider"><span>DENSITÉ (Blobs)</span><span id="val-dens">15</span></div>
+            <input type="range" id="slider-dens" min="5" max="40" value="15">
+        </div>
+
+        <span class="label-section">FILTRES DE SÉCURITÉ</span>
+        <label class="container-checkbox">
+            <input type="checkbox" id="cb-grain"> GRAIN ANALOGIQUE
+        </label>
+        <label class="container-checkbox">
+            <input type="checkbox" id="cb-tv"> EFFET TV
+        </label>
+    </div>
+</div>
+
+<script>
+/**
+ * FUTURE ENGINE V1.0
+ * Logic encapsulated in an IIFE.
+ */
+(() => {
+    "use strict";
+
+    // --- SÉCURITÉ ---
+    const SecurityManager = (() => {
+        return {
+            init: () => {
+                document.addEventListener('contextmenu', e => e.preventDefault());
+                document.addEventListener('keydown', e => {
+                    if (e.key === 'F12' || e.keyCode === 123) e.preventDefault();
+                    if (e.ctrlKey && e.shiftKey && ['I','C','J'].includes(e.key.toUpperCase())) e.preventDefault();
+                    if (e.ctrlKey && e.key.toUpperCase() === 'U') e.preventDefault();
+                });
+            }
+        };
+    })();
+    SecurityManager.init();
+
+    // --- UI MANAGER (Drag & Accordion & Modals) ---
+    const UIManager = (() => {
+        const initDrag = (panelId, headerId) => {
+            const panel = document.getElementById(panelId);
+            const header = document.getElementById(headerId);
+            let isDragging = false, sX, sY, iL, iT, wasDragged = false;
+
+            const start = (e) => {
+                if (e.target.classList.contains('icon-toggle')) return;
+                isDragging = true; wasDragged = false;
+                const p = e.touches ? e.touches[0] : e;
+                sX = p.clientX; sY = p.clientY;
+                iL = panel.offsetLeft; iT = panel.offsetTop;
+                window.addEventListener('mousemove', drag); window.addEventListener('mouseup', end);
+                window.addEventListener('touchmove', drag, {passive:false}); window.addEventListener('touchend', end);
+            };
+
+            const drag = (e) => {
+                if (!isDragging) return; e.preventDefault();
+                const p = e.touches ? e.touches[0] : e;
+                if (Math.abs(p.clientX - sX) > 3 || Math.abs(p.clientY - sY) > 3) wasDragged = true;
+                panel.style.left = (iL + p.clientX - sX) + 'px';
+                panel.style.top = (iT + p.clientY - sY) + 'px';
+            };
+
+            const end = () => { isDragging = false; window.removeEventListener('mousemove', drag); window.removeEventListener('mouseup', end); };
+            
+            header.addEventListener('mousedown', start); header.addEventListener('touchstart', start, {passive:false});
+            header.addEventListener('click', (e) => {
+                if (!wasDragged || e.target.classList.contains('icon-toggle')) {
+                    panel.classList.toggle('collapsed');
+                    panel.querySelector('.icon-toggle').textContent = panel.classList.contains('collapsed') ? '[+]' : '[-]';
+                }
+            });
+        };
+
+        const initModals = () => {
+            const openModal = (id) => document.getElementById(id).classList.add('open');
+            const closeAll = () => document.querySelectorAll('.modal').forEach(m => m.classList.remove('open'));
+            
+            document.getElementById('btn-info').onclick = () => openModal('modal-info');
+            
+            document.querySelectorAll('[data-close]').forEach(el => el.onclick = closeAll);
+            window.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+        };
+
+        return { init: () => { initDrag('panel-system', 'header-system'); initModals(); } };
+    })();
+    UIManager.init();
+
+    // --- MOTEUR DE RENDU (Blobs & Canvas) ---
+    const Engine = (() => {
+        const v1 = document.getElementById('c1'), v2 = document.getElementById('c2');
+        const x1 = v1.getContext('2d'), x2 = v2.getContext('2d');
+        
+        let blobs = [];
+        const conf = { b: 45, n: 15, m: 0 };
+        
+        const themes = Object.freeze([
+            Object.freeze([{r:0,g:242,b:255},{r:255,g:0,b:242}]), // CYBER
+            Object.freeze([{r:0,g:255,b:0},{r:0,g:100,b:0}]),     // MATRICE
+            Object.freeze([{r:255,g:30,b:0},{r:255,g:200,b:0}])   // FLAMME
+        ]);
+
+        class B {
+            constructor(w,h,i){
+                this.w=w; this.h=h; this.i=i;
+                this.x=Math.random()*w; this.y=Math.random()*h;
+                this.r=40+Math.random()*40;
+                this.vx=(Math.random()-0.5)*2.5; this.vy=(Math.random()-0.5)*2.5;
+            }
+            update(){
+                this.x+=this.vx; this.y+=this.vy;
+                if(this.x<0||this.x>this.w) this.vx*=-1;
+                if(this.y<0||this.y>this.h) this.vy*=-1;
+            }
+            draw(ctx){
+                const s = parseInt(conf.b) + (this.r*0.5);
+                const g = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,s);
+                const c = themes[conf.m][this.i];
+                g.addColorStop(0,`rgba(${c.r},${c.g},${c.b},1)`);
+                g.addColorStop(1,`rgba(${c.r},${c.g},${c.b},0)`);
+                ctx.fillStyle=g; ctx.beginPath(); ctx.arc(this.x,this.y,s,0,6.29); ctx.fill();
+            }
+        }
+
+        const resize = () => {
+            v1.width=v2.width=v1.parentElement.offsetWidth;
+            v1.height=v2.height=v1.parentElement.offsetHeight;
+        };
+
+        const initBlobs = () => {
+            blobs=[]; 
+            for(let i=0; i<conf.n; i++) blobs.push(new B(v1.width, v1.height, i%2));
+        };
+
+        const loop = () => {
+            x1.clearRect(0,0,v1.width,v1.height); x2.clearRect(0,0,v2.width,v2.height);
+            x1.globalCompositeOperation = x2.globalCompositeOperation = 'lighter';
+            blobs.forEach(b => { b.update(); b.draw(x1); b.draw(x2); });
+            requestAnimationFrame(loop);
+        };
+
+        // UI Listeners
+        document.getElementById('select-theme').onchange = (e) => { 
+            conf.m = parseInt(e.target.value); 
+            // Update UI Hue variable
+            const hues = [180, 120, 15]; 
+            document.documentElement.style.setProperty('--hue', hues[conf.m]);
+            initBlobs(); 
+        };
+        
+        document.getElementById('slider-diff').oninput = (e) => {
+            conf.b = e.target.value; document.getElementById('val-diff').textContent = conf.b;
+        };
+        
+        document.getElementById('slider-dens').oninput = (e) => {
+            conf.n = e.target.value; document.getElementById('val-dens').textContent = conf.n;
+            initBlobs();
+        };
+
+        document.getElementById('cb-grain').onchange = (e) => document.getElementById('g').style.display = e.target.checked ? 'block' : 'none';
+        document.getElementById('cb-tv').onchange = (e) => document.getElementById('t').style.display = e.target.checked ? 'block' : 'none';
+
+        return {
+            start: () => {
+                window.onresize = () => { resize(); initBlobs(); };
+                resize(); initBlobs(); loop();
+            }
+        };
+    })();
+
+    Engine.start();
+})();
+</script>
+</body>
+</html>
