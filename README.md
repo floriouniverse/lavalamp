@@ -130,8 +130,7 @@ Vibe Code (Gemini + GPT + prompts + modifications personnelles)
 - [ ] Bouton crédits contributeurs
 - [ ] Centrage Flexbox, correctif menu
 - [ ] Sécurité sur demo https://floriouniverse.github.io/lavalamp/ (retrait unsafe-eval/innerHTML, isolation scope), (blocage F12/clic droit)
-- [ ] 🛑Bug: Delta time moteur = possible conflit de vitesse selon les appareils. 
-- [ ] 🛑PBs: Bloquer###
+- [ ] 🛑Bug: Delta time moteur = possible conflit de vitesse selon les appareils.
 - **V0.4** 
 - [ ] OUTIL ANNEXE MOTOR (HORS LAVA LAMP)> Visuel des effets transitions fondues, répulsion, fusion bulles, séparation bulles, filtres et effets des bulles. (en dev)
 - [ ] Fav icon > Rajout du lien favicon pour l'onglet navigateur.
