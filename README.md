@@ -28,26 +28,13 @@ Accédez directement à la version web via le lien ci-dessus.
 
 ## ✨ Fonctionnalités
 
-- Simulation de lampe à lave en temps réel (Canvas / DOM)
-- Changement de thèmes de couleur (touches 1 → 8)
-- Contrôle de la densité des bulles
-- Interface redimensionnable
-- Système de contrôle simple et accessible
-- Vanilla JS 
+- Simulation de lampe à lave en temps réel .
+- Changement de thèmes de couleur (touches 1 → 9 & touche c).
+- Contrôle de la densité, vitesse, taille, mouvement des bulles.
+- Interface redimensionnable, personalisable.
+- Système de contrôle déplacable, simple et accessible (Menu : version PC, Menu tactile : Mobile, Tablette).
+- Système d'extensions : EFFET TV, preset moteurs collabs, menu palette, menu tactile, changement de socle.
 
----
-
-## 🎮 Contrôles
-
-### Thèmes
-- Touches clavier **1 → 8** pour changer les couleurs de la lave
-- Menu UI (SYSTEM CONTROL)
-
-### Densité
-- Slider “SYSTEM CONTROL” pour ajuster le nombre de bulles
-
-### Interface
-- Panneau redimensionnable via le coin inférieur droit
 
 ---
 
@@ -57,6 +44,8 @@ Accédez directement à la version web via le lien ci-dessus.
 
 ### v0.6
 - [ ] Bugfix & équilibrage général
+- [ ] Agitation > remplacement par "Mouvement"
+- [ ] Création de points de répulsion et de points de fusion 
 - [ ] Design & accord couleur bouton "x"
 - [ ] Séparation modulaire (HTML / CSS / JS)
 
@@ -67,10 +56,10 @@ Accédez directement à la version web via le lien ci-dessus.
 
 Les conseils, aides  & contributions sont les bienvenues 🌱
 
-### Bonnes pratiques
-- Lire guide de collab
+### Bonnes pratiques sur ce repo
+- Lire &/ou améliorer guide de collab
 - Ajouter nom / pseudo + version en haut du code
-- Expliquer clairement les modifications
+- Expliquer les modifications
 - Commenter le code
 - Conserver les crédits existants
 - Respecter la vision collaborative
