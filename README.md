@@ -31,7 +31,7 @@ Accédez directement à la version web via le lien ci-dessus.
 - Simulation de lampe à lave en temps réel .
 - Changement de thèmes de couleur (touches 1 → 9 & touche c).
 - Contrôle de la densité, vitesse, taille, mouvement des bulles.
-- Interface redimensionnable, personalisable.
+- Interface redimensionnable, personnalisable.
 - Système de contrôle déplacable, simple et accessible (Menu : version PC, Menu tactile : Mobile, Tablette).
 - Système d'extensions : EFFET TV, preset moteurs collabs, menu palette, menu tactile, changement de socle.
 
