@@ -3,6 +3,8 @@
 
 <img width="320" height="240" alt="CHROMAPROTOCOL" src="https://github.com/user-attachments/assets/1b4520d0-0805-4a5f-91e5-d6926154b30a" />
 
+<img width="240" height="240" alt="memecat" src="https://github.com/user-attachments/assets/518b18c4-659a-41d4-989b-73525c9b81b8" />
+
 📅 Version : ALPHA 0.5 
 🕒 Dernière modification : 28.04.26  
 
@@ -148,6 +150,5 @@ LavaLamp est un projet expérimental a vue pédagique de “vibe coding” & "co
 
 🔥 Merci de votre participation !
 
-<img width="240" height="240" alt="memecat" src="https://github.com/user-attachments/assets/518b18c4-659a-41d4-989b-73525c9b81b8" />
 
 
