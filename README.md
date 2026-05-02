@@ -90,7 +90,7 @@ https://creativecommons.org/licenses/by-nc/4.0/
 ## 🧾 Crédit
 
 ### Concept & Design
-- V0.0 → 0.1.3 : **ALAMBIC X EON GAMES**
+- V0.0 → 0.5 : **ALAMBIC X EON GAMES**
 - V0.2 : **Sxn**
 
 ### Architecture
